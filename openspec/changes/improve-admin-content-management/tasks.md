@@ -32,4 +32,4 @@
 
 - [x] 5.1 Verify category deletion's migration flow and the "can't delete the only category" guard against the local dev database (covered by real-DB integration tests in `categories.test.ts`/`categories.guard.test.ts`; owner-authenticated UI click-through still pending, see 5.3)
 - [x] 5.2 Run the full test suite and confirm no regressions in existing access-control/content-browsing/content-search tests (73/73 passing; also confirmed via curl that unauthenticated requests to the new `/admin/categories` route and `/admin/articles` with filter query params still redirect correctly, and public pages are unaffected)
-- [ ] 5.3 Deploy via the existing GitHub → Vercel pipeline and smoke-test category deletion, article deletion, and the admin filters in production
+- [x] 5.3 Deploy via the existing GitHub → Vercel pipeline and smoke-test category deletion, article deletion, and the admin filters in production (owner confirmed: nav links, category create/rename/delete-with-migration, article delete, status/category/title filters, and the relocated Save button all work as expected)
