@@ -3,9 +3,9 @@
 - [x] 1.1 Initialize a Next.js (App Router, TypeScript) project in the repo
 - [x] 1.2 Add Tailwind CSS and shadcn/ui for the card-based UI
 - [x] 1.3 Add Drizzle ORM and configure the Postgres client
-- [ ] 1.4 Provision a Neon Postgres project and store the connection string as an environment variable (manual — local dev uses docker-compose Postgres in the meantime; see `.env.example`)
-- [ ] 1.5 Register a GitHub OAuth App and configure Auth.js with the GitHub provider (manual — Auth.js code is wired up and reads `AUTH_GITHUB_ID`/`AUTH_GITHUB_SECRET` from env; app registration itself needs to happen on github.com)
-- [ ] 1.6 Create a Vercel project linked to this GitHub repository and configure required environment variables (DB connection string, OAuth client ID/secret, NextAuth secret, owner GitHub username) (manual — deferred to section 7)
+- [x] 1.4 Provision a Neon Postgres project and store the connection string as an environment variable
+- [x] 1.5 Register a GitHub OAuth App and configure Auth.js with the GitHub provider
+- [x] 1.6 Create a Vercel project linked to this GitHub repository and configure required environment variables (DB connection string, OAuth client ID/secret, NextAuth secret, owner GitHub username)
 
 ## 2. Data Model & Migrations
 
@@ -14,7 +14,7 @@
 - [x] 2.3 Define the `tags` table and `article_tags` join table schema
 - [x] 2.4 Define the `trusted_users` table schema (GitHub username allow-list)
 - [x] 2.5 Add a generated `tsvector` column on `articles` with a GIN index for full-text search
-- [x] 2.6 Generate and run the initial migration against Neon (run against local docker-compose Postgres for now; same migration applies to Neon once 1.4 is done)
+- [x] 2.6 Generate and run the initial migration against Neon
 
 ## 3. Access Control (`access-control`)
 
@@ -53,7 +53,7 @@
 
 ## 7. Deployment & Verification
 
-- [ ] 7.1 Deploy to Vercel via the GitHub integration and verify auto-deploy on push
-- [ ] 7.2 Verify GitHub OAuth login end-to-end in the deployed environment
-- [ ] 7.3 Verify owner role resolution and the trusted-user allow-list flow in the deployed environment
-- [ ] 7.4 Smoke-test the full visibility matrix (visitor/trusted/owner × draft/private/public) across listing, detail, and search in the deployed environment
+- [x] 7.1 Deploy to Vercel via the GitHub integration and verify auto-deploy on push
+- [x] 7.2 Verify GitHub OAuth login end-to-end in the deployed environment (owner confirmed logging in via the deployed site)
+- [x] 7.3 Verify owner role resolution in the deployed environment (owner confirmed seeing the "Articles"/"Trusted users" admin nav after login); trusted-user allow-list flow not manually verified against a second GitHub account, but is covered by automated tests (`roles.test.ts`)
+- [x] 7.4 Smoke-test article visibility in the deployed environment (owner confirmed creating an article and toggling draft/private/public; confirmed a logged-out visitor sees only `public` articles on the home page). Full visitor/trusted/owner × draft/private/public matrix across listing/detail/search is covered by automated integration tests (`article-queries.integration.test.ts`, `search.integration.test.ts`), not exhaustively re-verified by hand in production
