@@ -12,13 +12,22 @@ export async function SiteHeader() {
           Learning Notes
         </Link>
         <nav className="flex items-center gap-4 text-sm">
+          <Link href="/" className="text-muted-foreground hover:text-foreground">
+            Home
+          </Link>
           <Link href="/search" className="text-muted-foreground hover:text-foreground">
             Search
           </Link>
           {role === "owner" && (
             <>
               <Link href="/admin/articles" className="text-muted-foreground hover:text-foreground">
-                Articles
+                Article Management
+              </Link>
+              <Link
+                href="/admin/categories"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Categories
               </Link>
               <Link
                 href="/admin/trusted-users"

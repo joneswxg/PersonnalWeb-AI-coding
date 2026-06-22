@@ -100,3 +100,13 @@ export async function setArticleStatus(
   revalidatePath("/admin/articles");
   revalidatePath(`/admin/articles/${articleId}/edit`);
 }
+
+export async function deleteArticle(articleId: number): Promise<void> {
+  await requireOwner();
+
+  // article_tags.articleId is ON DELETE CASCADE, so tag associations are
+  // cleaned up automatically by the database.
+  await db.delete(articles).where(eq(articles.id, articleId));
+
+  revalidatePath("/admin/articles");
+}

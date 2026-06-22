@@ -70,7 +70,11 @@ export default async function EditArticlePage({
         ))}
       </div>
 
-      <form action={updateArticleWithId} className="space-y-4">
+      <Button type="submit" form="edit-article-form">
+        Save changes
+      </Button>
+
+      <form id="edit-article-form" action={updateArticleWithId} className="space-y-4">
         <div className="space-y-1">
           <Label htmlFor="title">Title</Label>
           <Input id="title" name="title" defaultValue={article.title} required />
@@ -89,7 +93,6 @@ export default async function EditArticlePage({
           <Input id="tags" name="tags" defaultValue={tagsValue} />
         </div>
         <MarkdownEditor name="content" defaultValue={article.content} />
-        <Button type="submit">Save changes</Button>
       </form>
     </div>
   );
