@@ -22,4 +22,4 @@
 
 - [x] 4.1 Run the full test suite, confirm no regressions (87/87 passing)
 - [x] 4.2 Manually verify in the local dev environment: inserted a real article via script whose body repeats its title as a leading `#` heading — confirmed via the rendered HTML that the page has exactly one `<h1>`, the duplicate heading is omitted from the rendered body, and the left `CategoryTagNav` sidebar renders alongside it. The admin category dropdown itself still needs an owner-authenticated click-through (see 4.3)
-- [ ] 4.3 Deploy via the existing GitHub → Vercel pipeline and smoke-test in production
+- [x] 4.3 Deploy via the existing GitHub → Vercel pipeline and smoke-test in production (owner confirmed: category dropdown on new/edit article forms only offers existing categories, and the article detail page shows the same left category/tag sidebar as the home page)
