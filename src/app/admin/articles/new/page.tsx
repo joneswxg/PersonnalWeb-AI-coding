@@ -1,10 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { MarkdownEditor } from "@/components/markdown-editor";
+import { listCategories } from "@/lib/article-queries";
 import { createArticle } from "../actions";
 
-export default function NewArticlePage() {
+export default async function NewArticlePage() {
+  const categoryList = await listCategories();
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">New article</h1>
@@ -14,13 +24,19 @@ export default function NewArticlePage() {
           <Input id="title" name="title" required />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="categoryName">Category</Label>
-          <Input
-            id="categoryName"
-            name="categoryName"
-            placeholder="e.g. Rust"
-            required
-          />
+          <Label htmlFor="categoryId">Category</Label>
+          <Select name="categoryId" required>
+            <SelectTrigger id="categoryId" className="w-full">
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categoryList.map((category) => (
+                <SelectItem key={category.id} value={String(category.id)}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="space-y-1">
           <Label htmlFor="tags">Tags (comma-separated)</Label>

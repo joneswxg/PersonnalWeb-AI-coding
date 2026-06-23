@@ -3,7 +3,6 @@ import { db } from "@/db";
 import {
   articles,
   articleTags,
-  categories,
   tags,
   articleStatusValues,
   type ArticleStatus,
@@ -41,39 +40,6 @@ export async function generateUniqueArticleSlug(
     candidate = `${base}-${suffix}`;
     suffix += 1;
   }
-}
-
-/** Finds a category by name (case-sensitive match on name), or creates it. */
-export async function resolveCategoryByName(name: string): Promise<number> {
-  const trimmed = name.trim();
-  const existing = await db
-    .select({ id: categories.id })
-    .from(categories)
-    .where(eq(categories.name, trimmed))
-    .limit(1);
-
-  if (existing.length > 0) {
-    return existing[0].id;
-  }
-
-  const slugBase = slugify(trimmed) || `category-${Math.random().toString(36).slice(2, 8)}`;
-  const [created] = await db
-    .insert(categories)
-    .values({ name: trimmed, slug: slugBase })
-    .onConflictDoNothing({ target: categories.slug })
-    .returning({ id: categories.id });
-
-  if (created) {
-    return created.id;
-  }
-
-  // Slug collided with a differently-named category created concurrently; look it up.
-  const [bySlug] = await db
-    .select({ id: categories.id })
-    .from(categories)
-    .where(eq(categories.slug, slugBase))
-    .limit(1);
-  return bySlug.id;
 }
 
 /** Finds-or-creates a tag for each name and returns their ids, de-duplicated. */

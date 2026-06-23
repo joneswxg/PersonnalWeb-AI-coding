@@ -10,7 +10,6 @@ import {
   generateUniqueArticleSlug,
   isArticleStatus,
   parseTagsInput,
-  resolveCategoryByName,
   resolveTagsByNames,
   setArticleTags,
 } from "@/lib/articles";
@@ -18,25 +17,28 @@ import {
 function readArticleForm(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
   const content = String(formData.get("content") ?? "");
-  const categoryName = String(formData.get("categoryName") ?? "").trim();
+  const rawCategoryId = formData.get("categoryId");
   const tagNames = parseTagsInput(String(formData.get("tags") ?? ""));
 
   if (!title) {
     throw new Error("Title is required");
   }
-  if (!categoryName) {
+  if (typeof rawCategoryId !== "string" || rawCategoryId.trim() === "") {
+    throw new Error("Category is required");
+  }
+  const categoryId = Number(rawCategoryId);
+  if (!Number.isInteger(categoryId)) {
     throw new Error("Category is required");
   }
 
-  return { title, content, categoryName, tagNames };
+  return { title, content, categoryId, tagNames };
 }
 
 export async function createArticle(formData: FormData): Promise<void> {
   await requireOwner();
 
-  const { title, content, categoryName, tagNames } = readArticleForm(formData);
+  const { title, content, categoryId, tagNames } = readArticleForm(formData);
   const slug = await generateUniqueArticleSlug(title);
-  const categoryId = await resolveCategoryByName(categoryName);
   const tagIds = await resolveTagsByNames(tagNames);
 
   const [created] = await db
@@ -53,8 +55,7 @@ export async function createArticle(formData: FormData): Promise<void> {
 export async function updateArticle(articleId: number, formData: FormData): Promise<void> {
   await requireOwner();
 
-  const { title, content, categoryName, tagNames } = readArticleForm(formData);
-  const categoryId = await resolveCategoryByName(categoryName);
+  const { title, content, categoryId, tagNames } = readArticleForm(formData);
   const tagIds = await resolveTagsByNames(tagNames);
 
   const [existing] = await db

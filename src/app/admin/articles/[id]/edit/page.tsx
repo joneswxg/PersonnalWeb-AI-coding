@@ -1,13 +1,21 @@
 import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { articles, categories } from "@/db/schema";
+import { articles } from "@/db/schema";
 import { getAllTagsForArticles } from "@/lib/articles";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { MarkdownEditor } from "@/components/markdown-editor";
+import { listCategories } from "@/lib/article-queries";
 import { updateArticle, setArticleStatus } from "../../actions";
 import type { ArticleStatus } from "@/db/schema";
 
@@ -30,10 +38,9 @@ export default async function EditArticlePage({
       title: articles.title,
       content: articles.content,
       status: articles.status,
-      categoryName: categories.name,
+      categoryId: articles.categoryId,
     })
     .from(articles)
-    .leftJoin(categories, eq(articles.categoryId, categories.id))
     .where(eq(articles.id, articleId))
     .limit(1);
 
@@ -41,6 +48,7 @@ export default async function EditArticlePage({
     notFound();
   }
 
+  const categoryList = await listCategories();
   const tagsByArticle = await getAllTagsForArticles([articleId]);
   const tagsValue = (tagsByArticle.get(articleId) ?? []).map((t) => t.name).join(", ");
 
@@ -80,13 +88,23 @@ export default async function EditArticlePage({
           <Input id="title" name="title" defaultValue={article.title} required />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="categoryName">Category</Label>
-          <Input
-            id="categoryName"
-            name="categoryName"
-            defaultValue={article.categoryName ?? ""}
+          <Label htmlFor="categoryId">Category</Label>
+          <Select
+            name="categoryId"
+            defaultValue={article.categoryId ? String(article.categoryId) : undefined}
             required
-          />
+          >
+            <SelectTrigger id="categoryId" className="w-full">
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categoryList.map((category) => (
+                <SelectItem key={category.id} value={String(category.id)}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="space-y-1">
           <Label htmlFor="tags">Tags (comma-separated)</Label>
