@@ -12,7 +12,6 @@ if (!connectionString) {
 // the local Postgres connection limit; each serverless invocation in
 // production still gets its own fresh module instance.
 declare global {
-  // eslint-disable-next-line no-var
   var __dbClient: ReturnType<typeof postgres> | undefined;
 }
 
