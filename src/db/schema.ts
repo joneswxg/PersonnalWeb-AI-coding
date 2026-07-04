@@ -71,6 +71,27 @@ export const articleTags = pgTable(
   (table) => [primaryKey({ columns: [table.articleId, table.tagId] })],
 );
 
+export const mediaAssets = pgTable(
+  "media_assets",
+  {
+    id: serial("id").primaryKey(),
+    articleId: integer("article_id").references(() => articles.id, {
+      onDelete: "set null",
+    }),
+    bucket: text("bucket").notNull(),
+    objectPath: text("object_path").notNull(),
+    publicUrl: text("public_url").notNull(),
+    mimeType: text("mime_type").notNull(),
+    sizeBytes: integer("size_bytes").notNull(),
+    altText: text("alt_text"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("media_assets_article_idx").on(table.articleId),
+    index("media_assets_created_at_idx").on(table.createdAt),
+  ],
+);
+
 export const trustedUsers = pgTable("trusted_users", {
   id: serial("id").primaryKey(),
   githubUsername: text("github_username").notNull().unique(),

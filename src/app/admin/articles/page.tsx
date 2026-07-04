@@ -35,7 +35,7 @@ export default async function AdminArticlesPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Article Management</h1>
-        <Button render={<Link href="/admin/articles/new">New article</Link>} />
+        <Button nativeButton={false} render={<Link href="/admin/articles/new">New article</Link>} />
       </div>
 
       <form method="get" className="flex flex-wrap items-end gap-3">
@@ -71,7 +71,11 @@ export default async function AdminArticlesPage({
           Filter
         </Button>
         {(status || categoryId || q) && (
-          <Button render={<Link href="/admin/articles">Clear</Link>} variant="ghost" />
+          <Button
+            nativeButton={false}
+            render={<Link href="/admin/articles">Clear</Link>}
+            variant="ghost"
+          />
         )}
       </form>
 

@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/select";
 import { MarkdownEditor } from "@/components/markdown-editor";
 import { listCategories } from "@/lib/article-queries";
-import { updateArticle, setArticleStatus } from "../../actions";
+import { listMediaAssetsForEditor } from "@/lib/media-assets";
+import { deleteArticleImage, updateArticle, setArticleStatus, uploadArticleImage } from "../../actions";
 import type { ArticleStatus } from "@/db/schema";
 
 const STATUSES: ArticleStatus[] = ["draft", "private", "public"];
@@ -51,6 +52,7 @@ export default async function EditArticlePage({
   const categoryList = await listCategories();
   const tagsByArticle = await getAllTagsForArticles([articleId]);
   const tagsValue = (tagsByArticle.get(articleId) ?? []).map((t) => t.name).join(", ");
+  const mediaAssets = await listMediaAssetsForEditor(articleId);
 
   const updateArticleWithId = updateArticle.bind(null, articleId);
 
@@ -110,8 +112,15 @@ export default async function EditArticlePage({
           <Label htmlFor="tags">Tags (comma-separated)</Label>
           <Input id="tags" name="tags" defaultValue={tagsValue} />
         </div>
-        <MarkdownEditor name="content" defaultValue={article.content} />
       </form>
+      <MarkdownEditor
+        name="content"
+        formId="edit-article-form"
+        defaultValue={article.content}
+        mediaAssets={mediaAssets}
+        uploadImageAction={uploadArticleImage.bind(null, articleId)}
+        deleteImageAction={deleteArticleImage.bind(null, articleId)}
+      />
     </div>
   );
 }
