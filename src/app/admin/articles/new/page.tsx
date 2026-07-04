@@ -10,15 +10,17 @@ import {
 } from "@/components/ui/select";
 import { MarkdownEditor } from "@/components/markdown-editor";
 import { listCategories } from "@/lib/article-queries";
-import { createArticle } from "../actions";
+import { listMediaAssetsForEditor } from "@/lib/media-assets";
+import { createArticle, deleteArticleImage, uploadArticleImage } from "../actions";
 
 export default async function NewArticlePage() {
   const categoryList = await listCategories();
+  const mediaAssets = await listMediaAssetsForEditor(null);
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">New article</h1>
-      <form action={createArticle} className="space-y-4">
+      <form id="new-article-form" action={createArticle} className="space-y-4">
         <div className="space-y-1">
           <Label htmlFor="title">Title</Label>
           <Input id="title" name="title" required />
@@ -42,12 +44,20 @@ export default async function NewArticlePage() {
           <Label htmlFor="tags">Tags (comma-separated)</Label>
           <Input id="tags" name="tags" placeholder="e.g. async, tokio" />
         </div>
-        <MarkdownEditor name="content" />
-        <p className="text-muted-foreground text-sm">
-          Saves as a draft. You can publish it from the edit page.
-        </p>
-        <Button type="submit">Create draft</Button>
       </form>
+      <MarkdownEditor
+        name="content"
+        formId="new-article-form"
+        mediaAssets={mediaAssets}
+        uploadImageAction={uploadArticleImage.bind(null, null)}
+        deleteImageAction={deleteArticleImage.bind(null, null)}
+      />
+      <p className="text-muted-foreground text-sm">
+        Saves as a draft. You can publish it from the edit page.
+      </p>
+      <Button type="submit" form="new-article-form">
+        Create draft
+      </Button>
     </div>
   );
 }
