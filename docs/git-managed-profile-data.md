@@ -1,7 +1,7 @@
 # Git-Managed Profile Data
 
 `content/portfolio-profile.md` is the source of truth for the public Portfolio
-Profile and résumé. It is intentionally maintained through Git commits: there
+Profile content. It is intentionally maintained through Git commits: there
 is no profile database and no in-site editor.
 
 ## Editing workflow
