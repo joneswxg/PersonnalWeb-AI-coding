@@ -24,6 +24,7 @@ const labels = {
     introduction:
       "这里收录符合公开作品规则的 GitHub 项目，项目信息直接来自仓库，并由版本控制的作品集规则进行筛选。",
     empty: "目前没有符合公开作品规则的项目。",
+    directoryUnavailable: "GitHub 项目目录暂时无法刷新，请稍后重试。",
     noSummary: "此仓库暂未提供项目简介。",
     technologies: "主要技术",
     topics: "主题",
@@ -42,7 +43,7 @@ const labels = {
     source: "数据源",
     window: "统计窗口",
     collected: "采集时间",
-    stale: "GitHub 刷新失败，当前展示最近一次成功保存的快照。",
+    retainedSnapshot: "GitHub 刷新失败，当前展示最近一次成功保存的活动快照。",
     unavailable: "GitHub 活动暂不可用，且尚无已保存的活动快照。",
   },
   en: {
@@ -51,6 +52,7 @@ const labels = {
     introduction:
       "Eligible GitHub work appears here from repository data, filtered by the editorial rules maintained with the portfolio profile.",
     empty: "No projects currently meet the public portfolio rules.",
+    directoryUnavailable: "The GitHub project directory cannot be refreshed right now.",
     noSummary: "This repository does not provide a project summary yet.",
     technologies: "Principal technologies",
     topics: "Topics",
@@ -69,7 +71,7 @@ const labels = {
     source: "Source",
     window: "Activity Window",
     collected: "Collected",
-    stale: "GitHub refresh failed. Showing the latest successful stored snapshot.",
+    retainedSnapshot: "GitHub refresh failed. Showing the latest successful Activity Snapshot.",
     unavailable: "GitHub activity is unavailable and no stored snapshot exists yet.",
   },
 } as const;
@@ -145,9 +147,9 @@ function ActivityDashboard({
         </dl>
       </div>
 
-      {result.status === "stale-fallback" && (
+      {result.status === "retained-snapshot" && (
         <p className="mt-6 rounded-2xl bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
-          {copy.stale}
+          {copy.retainedSnapshot}
         </p>
       )}
 
@@ -300,7 +302,8 @@ function ProjectCard({
 export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
   const parameters = await searchParams;
   const locale: PortfolioLocale = parameters.lang === "en" ? "en" : "zh";
-  const { projects, activity } = await loadPublicProjectDirectoryWithActivity(locale);
+  const { directoryStatus, projects, activity } =
+    await loadPublicProjectDirectoryWithActivity(locale);
   const copy = labels[locale];
 
   return (
@@ -338,7 +341,11 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
 
         <ActivityDashboard result={activity} locale={locale} />
 
-        {projects.length === 0 ? (
+        {directoryStatus === "unavailable" ? (
+          <p className="rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-16 text-center text-stone-500">
+            {copy.directoryUnavailable}
+          </p>
+        ) : projects.length === 0 ? (
           <p className="rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-16 text-center text-stone-500">
             {copy.empty}
           </p>

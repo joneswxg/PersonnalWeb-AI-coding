@@ -25,14 +25,14 @@ describe("collectActivitySnapshot", () => {
       [
         "alpha",
         [
-          { authorLogin: "joneswxg", authoredAt: "2026-08-05T16:00:00.000Z" },
+          { authorLogin: "joneswxg", authoredAt: "2026-08-05T10:00:00.000Z" },
           { authorLogin: "someone-else", authoredAt: "2026-09-03T08:00:00.000Z" },
         ],
       ],
       [
         "beta",
         [
-          { authorLogin: "joneswxg", authoredAt: "2026-08-05T15:59:59.999Z" },
+          { authorLogin: "joneswxg", authoredAt: "2026-08-05T09:59:59.999Z" },
         ],
       ],
       [
@@ -67,7 +67,7 @@ describe("collectActivitySnapshot", () => {
       window: {
         timeZone: "Asia/Shanghai",
         durationDays: 30,
-        startsAt: "2026-08-05T16:00:00.000Z",
+        startsAt: "2026-08-05T10:00:00.000Z",
         endsAt: "2026-09-04T10:00:00.000Z",
       },
       metrics: {
@@ -91,7 +91,7 @@ const snapshotAt = (collectedAt: string): ActivitySnapshot => ({
   window: {
     timeZone: "Asia/Shanghai",
     durationDays: 30,
-    startsAt: "2026-08-05T16:00:00.000Z",
+    startsAt: "2026-08-05T10:00:00.000Z",
     endsAt: collectedAt,
   },
   metrics: {
@@ -121,7 +121,7 @@ describe("resolveActivitySnapshot", () => {
       now: new Date("2026-09-04T10:00:00.000Z"),
     });
 
-    expect(result).toEqual({ status: "fresh-cache", snapshot: existing });
+    expect(result).toEqual({ status: "fresh-snapshot", snapshot: existing });
     expect(refresh).not.toHaveBeenCalled();
     expect(store.save).not.toHaveBeenCalled();
   });
@@ -140,7 +140,7 @@ describe("resolveActivitySnapshot", () => {
       now: new Date("2026-09-04T10:00:00.000Z"),
     });
 
-    expect(result).toEqual({ status: "stale-fallback", snapshot: existing });
+    expect(result).toEqual({ status: "retained-snapshot", snapshot: existing });
     expect(store.save).not.toHaveBeenCalled();
   });
 

@@ -6,7 +6,6 @@ export const activityWindowDurationDays = 30;
 export const activitySnapshotFreshnessHours = 24;
 
 const dayMilliseconds = 24 * 60 * 60 * 1_000;
-const shanghaiUtcOffsetMilliseconds = 8 * 60 * 60 * 1_000;
 
 export type GitHubCommit = {
   authorLogin?: string;
@@ -50,7 +49,10 @@ export type ActivitySnapshotStore = {
 };
 
 export type ActivitySnapshotResult =
-  | { status: "fresh-cache" | "refreshed" | "stale-fallback"; snapshot: ActivitySnapshot }
+  | {
+      status: "fresh-snapshot" | "refreshed" | "retained-snapshot";
+      snapshot: ActivitySnapshot;
+    }
   | { status: "unavailable"; snapshot: null };
 
 type CollectActivitySnapshotInput = {
@@ -61,25 +63,7 @@ type CollectActivitySnapshotInput = {
 };
 
 function activityWindowStart(now: Date): Date {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: activityTimeZone,
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-  }).formatToParts(now);
-  const value = (type: Intl.DateTimeFormatPartTypes) =>
-    Number(parts.find((part) => part.type === type)?.value);
-  const currentShanghaiDateAtUtc = Date.UTC(
-    value("year"),
-    value("month") - 1,
-    value("day"),
-  );
-
-  return new Date(
-    currentShanghaiDateAtUtc -
-      (activityWindowDurationDays - 1) * dayMilliseconds -
-      shanghaiUtcOffsetMilliseconds,
-  );
+  return new Date(now.getTime() - activityWindowDurationDays * dayMilliseconds);
 }
 
 function primaryLanguageDistribution(projects: ProjectOverview[]) {
@@ -185,7 +169,7 @@ export async function resolveActivitySnapshot({
     snapshotAge >= 0 &&
     snapshotAge < freshnessMilliseconds
   ) {
-    return { status: "fresh-cache", snapshot: existing };
+    return { status: "fresh-snapshot", snapshot: existing };
   }
 
   try {
@@ -194,7 +178,7 @@ export async function resolveActivitySnapshot({
     return { status: "refreshed", snapshot };
   } catch {
     if (existing) {
-      return { status: "stale-fallback", snapshot: existing };
+      return { status: "retained-snapshot", snapshot: existing };
     }
     return { status: "unavailable", snapshot: null };
   }

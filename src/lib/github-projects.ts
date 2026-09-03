@@ -17,7 +17,7 @@ export type GitHubProjectSource = {
   listLanguages(repositoryName: string): Promise<Record<string, number>>;
 };
 
-type ProjectRules = {
+export type ProjectRules = {
   excludedRepositories: string[];
   admittedForks: Array<{
     repository: string;

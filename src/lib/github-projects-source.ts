@@ -2,18 +2,16 @@ import "server-only";
 
 import {
   buildPublicProjectDirectory,
-  type GitHubProjectSource,
   type GitHubRepository,
 } from "@/lib/github-projects";
-import {
-  collectActivitySnapshot,
-  resolveActivitySnapshot,
-  type GitHubActivitySource,
-  type GitHubCommit,
-} from "@/lib/github-activity";
+import type { GitHubCommit } from "@/lib/github-activity";
 import { databaseActivitySnapshotStore } from "@/lib/activity-snapshot-store";
 import { loadPortfolioProfilePresentation } from "@/lib/portfolio-profile-source";
 import type { PortfolioLocale } from "@/lib/portfolio-profile";
+import {
+  resolvePublicProjectDirectory,
+  type GitHubPortfolioSource,
+} from "@/lib/portfolio-project-directory";
 
 const githubApiUrl = "https://api.github.com";
 
@@ -37,8 +35,6 @@ type GitHubApiCommit = {
     author: { date: string | null } | null;
   };
 };
-
-type GitHubPortfolioSource = GitHubProjectSource & GitHubActivitySource;
 
 class GitHubRequestError extends Error {
   constructor(readonly status: number) {
@@ -175,22 +171,11 @@ export async function loadPublicProjectDirectoryWithActivity(
   const profile = await loadPortfolioProfilePresentation(locale);
   const githubIdentity = githubUsernameFromProfileUrl(profile.profile.githubUrl);
   const source = createGitHubProjectSource(githubIdentity, githubToken());
-  const projects = await buildPublicProjectDirectory({
+  return resolvePublicProjectDirectory({
+    githubIdentity,
     source,
     projectRules: profile.projectRules,
-  });
-  const activity = await resolveActivitySnapshot({
-    githubIdentity,
     store: databaseActivitySnapshotStore,
     now,
-    refresh: () =>
-      collectActivitySnapshot({
-        githubIdentity,
-        projects,
-        source,
-        now,
-      }),
   });
-
-  return { projects, activity };
 }
