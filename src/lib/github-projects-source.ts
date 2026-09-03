@@ -5,6 +5,13 @@ import {
   type GitHubProjectSource,
   type GitHubRepository,
 } from "@/lib/github-projects";
+import {
+  collectActivitySnapshot,
+  resolveActivitySnapshot,
+  type GitHubActivitySource,
+  type GitHubCommit,
+} from "@/lib/github-activity";
+import { databaseActivitySnapshotStore } from "@/lib/activity-snapshot-store";
 import { loadPortfolioProfilePresentation } from "@/lib/portfolio-profile-source";
 import type { PortfolioLocale } from "@/lib/portfolio-profile";
 
@@ -23,6 +30,21 @@ type GitHubApiRepository = {
   stargazers_count?: number;
   forks_count?: number;
 };
+
+type GitHubApiCommit = {
+  author: { login: string } | null;
+  commit: {
+    author: { date: string | null } | null;
+  };
+};
+
+type GitHubPortfolioSource = GitHubProjectSource & GitHubActivitySource;
+
+class GitHubRequestError extends Error {
+  constructor(readonly status: number) {
+    super(`GitHub request failed with status ${status}.`);
+  }
+}
 
 function githubUsernameFromProfileUrl(profileUrl: string): string {
   const username = new URL(profileUrl).pathname.split("/").filter(Boolean)[0];
@@ -51,7 +73,7 @@ async function githubRequest<T>(path: string, token: string): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`GitHub request failed with status ${response.status}.`);
+    throw new GitHubRequestError(response.status);
   }
 
   return response.json() as Promise<T>;
@@ -84,7 +106,7 @@ function mapRepository(repository: GitHubApiRepository): GitHubRepository {
 function createGitHubProjectSource(
   username: string,
   token: string,
-): GitHubProjectSource {
+): GitHubPortfolioSource {
   return {
     async listRepositories() {
       const repositories: GitHubRepository[] = [];
@@ -105,6 +127,32 @@ function createGitHubProjectSource(
         token,
       );
     },
+    async listCommits(repositoryName, githubIdentity) {
+      let response: GitHubApiCommit[];
+      try {
+        response = await githubRequest<GitHubApiCommit[]>(
+          `/repos/${encodeURIComponent(username)}/${encodeURIComponent(repositoryName)}/commits?author=${encodeURIComponent(githubIdentity)}&per_page=1`,
+          token,
+        );
+      } catch (error) {
+        if (error instanceof GitHubRequestError && error.status === 409) {
+          return [];
+        }
+        throw error;
+      }
+
+      return response.flatMap((commit): GitHubCommit[] => {
+        const authoredAt = commit.commit.author?.date;
+        return authoredAt
+          ? [
+              {
+                ...(commit.author ? { authorLogin: commit.author.login } : {}),
+                authoredAt,
+              },
+            ]
+          : [];
+      });
+    },
   };
 }
 
@@ -118,4 +166,31 @@ export async function loadPublicProjectDirectory(
     source: createGitHubProjectSource(username, githubToken()),
     projectRules: profile.projectRules,
   });
+}
+
+export async function loadPublicProjectDirectoryWithActivity(
+  locale: PortfolioLocale = "zh",
+  now = new Date(),
+) {
+  const profile = await loadPortfolioProfilePresentation(locale);
+  const githubIdentity = githubUsernameFromProfileUrl(profile.profile.githubUrl);
+  const source = createGitHubProjectSource(githubIdentity, githubToken());
+  const projects = await buildPublicProjectDirectory({
+    source,
+    projectRules: profile.projectRules,
+  });
+  const activity = await resolveActivitySnapshot({
+    githubIdentity,
+    store: databaseActivitySnapshotStore,
+    now,
+    refresh: () =>
+      collectActivitySnapshot({
+        githubIdentity,
+        projects,
+        source,
+        now,
+      }),
+  });
+
+  return { projects, activity };
 }

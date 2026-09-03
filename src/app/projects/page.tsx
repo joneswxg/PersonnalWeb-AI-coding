@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ExternalLink, GitFork, Star } from "lucide-react";
-import { loadPublicProjectDirectory } from "@/lib/github-projects-source";
+import { loadPublicProjectDirectoryWithActivity } from "@/lib/github-projects-source";
 import type { PortfolioLocale } from "@/lib/portfolio-profile";
 import type { ProjectOverview } from "@/lib/github-projects";
+import type { ActivitySnapshotResult } from "@/lib/github-activity";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,19 @@ const labels = {
     github: "在 GitHub 查看",
     attribution: "项目归属说明",
     upstream: "上游项目",
+    activityTitle: "GitHub 活动快照",
+    activityIntroduction: "仅统计由 GitHub 身份 joneswxg 创作的提交。",
+    eligibleProjects: "符合规则的项目",
+    activeProjects: "30 天内有本人提交的项目",
+    latestCommit: "最近一次本人提交",
+    languages: "主要语言分布",
+    noCommit: "暂无本人提交记录",
+    noLanguages: "暂无语言数据",
+    source: "数据源",
+    window: "统计窗口",
+    collected: "采集时间",
+    stale: "GitHub 刷新失败，当前展示最近一次成功保存的快照。",
+    unavailable: "GitHub 活动暂不可用，且尚无已保存的活动快照。",
   },
   en: {
     eyebrow: "Public Project Directory",
@@ -44,6 +58,19 @@ const labels = {
     github: "View on GitHub",
     attribution: "Project attribution",
     upstream: "Upstream",
+    activityTitle: "GitHub Activity Snapshot",
+    activityIntroduction: "Counts only commits authored by the joneswxg GitHub identity.",
+    eligibleProjects: "Eligible projects",
+    activeProjects: "Projects with owner commits in 30 days",
+    latestCommit: "Most recent owner commit",
+    languages: "Primary-language distribution",
+    noCommit: "No owner-authored commit found",
+    noLanguages: "No language data available",
+    source: "Source",
+    window: "Activity Window",
+    collected: "Collected",
+    stale: "GitHub refresh failed. Showing the latest successful stored snapshot.",
+    unavailable: "GitHub activity is unavailable and no stored snapshot exists yet.",
   },
 } as const;
 
@@ -55,6 +82,113 @@ function formatUpdateTime(value: string, locale: PortfolioLocale): string | unde
   return new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en", {
     dateStyle: "medium",
   }).format(date);
+}
+
+function formatActivityTime(value: string, locale: PortfolioLocale): string {
+  return new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Shanghai",
+  }).format(new Date(value));
+}
+
+function ActivityDashboard({
+  result,
+  locale,
+}: {
+  result: ActivitySnapshotResult;
+  locale: PortfolioLocale;
+}) {
+  const copy = labels[locale];
+
+  if (!result.snapshot) {
+    return (
+      <section className="mb-14 rounded-3xl border border-dashed border-stone-300 bg-white p-6 sm:p-8">
+        <h2 className="text-2xl font-semibold tracking-tight text-stone-950">
+          {copy.activityTitle}
+        </h2>
+        <p className="mt-4 text-stone-500">{copy.unavailable}</p>
+      </section>
+    );
+  }
+
+  const { snapshot } = result;
+  const metrics = snapshot.metrics;
+  const windowLabel = `${formatActivityTime(snapshot.window.startsAt, locale)} — ${formatActivityTime(snapshot.window.endsAt, locale)}`;
+
+  return (
+    <section className="mb-14 rounded-3xl bg-stone-950 p-6 text-white sm:p-8 lg:p-10">
+      <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-start">
+        <div className="max-w-2xl">
+          <p className="text-xs font-medium tracking-[0.18em] text-amber-300 uppercase">
+            {copy.activityTitle}
+          </p>
+          <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
+            {copy.activityIntroduction}
+          </h2>
+        </div>
+        <dl className="space-y-2 text-xs leading-5 text-stone-300">
+          <div>
+            <dt className="inline font-semibold text-white">{copy.source}: </dt>
+            <dd className="inline">{snapshot.source} · @{snapshot.githubIdentity}</dd>
+          </div>
+          <div>
+            <dt className="inline font-semibold text-white">{copy.window}: </dt>
+            <dd className="inline">
+              {windowLabel} ({snapshot.window.timeZone}, {snapshot.window.durationDays} days)
+            </dd>
+          </div>
+          <div>
+            <dt className="inline font-semibold text-white">{copy.collected}: </dt>
+            <dd className="inline">{formatActivityTime(snapshot.collectedAt, locale)}</dd>
+          </div>
+        </dl>
+      </div>
+
+      {result.status === "stale-fallback" && (
+        <p className="mt-6 rounded-2xl bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
+          {copy.stale}
+        </p>
+      )}
+
+      <dl className="mt-8 grid gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-3">
+        <div className="bg-stone-900 p-5">
+          <dt className="text-sm text-stone-400">{copy.eligibleProjects}</dt>
+          <dd className="mt-2 text-3xl font-semibold">{metrics.eligibleProjectCount}</dd>
+        </div>
+        <div className="bg-stone-900 p-5">
+          <dt className="text-sm text-stone-400">{copy.activeProjects}</dt>
+          <dd className="mt-2 text-3xl font-semibold">{metrics.activeProjectCount}</dd>
+        </div>
+        <div className="bg-stone-900 p-5">
+          <dt className="text-sm text-stone-400">{copy.latestCommit}</dt>
+          <dd className="mt-2 text-base font-semibold">
+            {metrics.mostRecentOwnerCommitAt
+              ? formatActivityTime(metrics.mostRecentOwnerCommitAt, locale)
+              : copy.noCommit}
+          </dd>
+        </div>
+      </dl>
+
+      <div className="mt-8">
+        <h3 className="text-sm font-semibold text-stone-200">{copy.languages}</h3>
+        {metrics.primaryLanguageDistribution.length === 0 ? (
+          <p className="mt-3 text-sm text-stone-400">{copy.noLanguages}</p>
+        ) : (
+          <div className="mt-4 flex flex-wrap gap-3">
+            {metrics.primaryLanguageDistribution.map((item) => (
+              <span
+                key={item.language}
+                className="rounded-full bg-white/10 px-3 py-1.5 text-sm text-stone-100"
+              >
+                {item.language} · {item.projectCount}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
 }
 
 function ProjectCard({
@@ -166,7 +300,7 @@ function ProjectCard({
 export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
   const parameters = await searchParams;
   const locale: PortfolioLocale = parameters.lang === "en" ? "en" : "zh";
-  const projects = await loadPublicProjectDirectory(locale);
+  const { projects, activity } = await loadPublicProjectDirectoryWithActivity(locale);
   const copy = labels[locale];
 
   return (
@@ -201,6 +335,8 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
             {copy.introduction}
           </p>
         </header>
+
+        <ActivityDashboard result={activity} locale={locale} />
 
         {projects.length === 0 ? (
           <p className="rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-16 text-center text-stone-500">
