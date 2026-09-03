@@ -1,0 +1,121 @@
+import "server-only";
+
+import {
+  buildPublicProjectDirectory,
+  type GitHubProjectSource,
+  type GitHubRepository,
+} from "@/lib/github-projects";
+import { loadPortfolioProfilePresentation } from "@/lib/portfolio-profile-source";
+import type { PortfolioLocale } from "@/lib/portfolio-profile";
+
+const githubApiUrl = "https://api.github.com";
+
+type GitHubApiRepository = {
+  name: string;
+  full_name: string;
+  html_url: string;
+  private: boolean;
+  archived: boolean;
+  fork: boolean;
+  description: string | null;
+  topics?: string[];
+  updated_at?: string;
+  stargazers_count?: number;
+  forks_count?: number;
+};
+
+function githubUsernameFromProfileUrl(profileUrl: string): string {
+  const username = new URL(profileUrl).pathname.split("/").filter(Boolean)[0];
+  if (!username) {
+    throw new Error("Portfolio Profile GitHub URL must identify a GitHub user.");
+  }
+  return username;
+}
+
+function githubToken(): string {
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) {
+    throw new Error("GITHUB_TOKEN is not set.");
+  }
+  return token;
+}
+
+async function githubRequest<T>(path: string, token: string): Promise<T> {
+  const response = await fetch(`${githubApiUrl}${path}`, {
+    cache: "no-store",
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${token}`,
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`GitHub request failed with status ${response.status}.`);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+function mapRepository(repository: GitHubApiRepository): GitHubRepository {
+  return {
+    name: repository.name,
+    fullName: repository.full_name,
+    githubUrl: repository.html_url,
+    isPrivate: repository.private,
+    isArchived: repository.archived,
+    isFork: repository.fork,
+    ...(repository.description === null
+      ? {}
+      : { summary: repository.description }),
+    ...(repository.topics === undefined ? {} : { topics: repository.topics }),
+    ...(repository.updated_at === undefined
+      ? {}
+      : { updatedAt: repository.updated_at }),
+    ...(repository.stargazers_count === undefined
+      ? {}
+      : { stars: repository.stargazers_count }),
+    ...(repository.forks_count === undefined
+      ? {}
+      : { forks: repository.forks_count }),
+  };
+}
+
+function createGitHubProjectSource(
+  username: string,
+  token: string,
+): GitHubProjectSource {
+  return {
+    async listRepositories() {
+      const repositories: GitHubRepository[] = [];
+      for (let page = 1; ; page += 1) {
+        const response = await githubRequest<GitHubApiRepository[]>(
+          `/users/${encodeURIComponent(username)}/repos?type=owner&sort=updated&per_page=100&page=${page}`,
+          token,
+        );
+        repositories.push(...response.map(mapRepository));
+        if (response.length < 100) {
+          return repositories;
+        }
+      }
+    },
+    listLanguages(repositoryName) {
+      return githubRequest<Record<string, number>>(
+        `/repos/${encodeURIComponent(username)}/${encodeURIComponent(repositoryName)}/languages`,
+        token,
+      );
+    },
+  };
+}
+
+export async function loadPublicProjectDirectory(
+  locale: PortfolioLocale = "zh",
+) {
+  const profile = await loadPortfolioProfilePresentation(locale);
+  const username = githubUsernameFromProfileUrl(profile.profile.githubUrl);
+
+  return buildPublicProjectDirectory({
+    source: createGitHubProjectSource(username, githubToken()),
+    projectRules: profile.projectRules,
+  });
+}

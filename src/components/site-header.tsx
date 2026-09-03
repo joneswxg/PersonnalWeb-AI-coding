@@ -15,6 +15,9 @@ export async function SiteHeader() {
           <Link href="/" className="text-muted-foreground hover:text-foreground">
             Portfolio
           </Link>
+          <Link href="/projects" className="text-muted-foreground hover:text-foreground">
+            Projects
+          </Link>
           <Link href="/journal" className="text-muted-foreground hover:text-foreground">
             Technical Journal
           </Link>
