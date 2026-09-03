@@ -67,6 +67,20 @@ For code changes, run:
 
 This verifies lint, typecheck, tests, and production build.
 
+## Agent skills
+
+### Issue tracker
+
+Issues and specs are tracked in GitHub Issues for `joneswxg/PersonnalWeb-AI-coding`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the five canonical triage labels mapped in `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Before work that names or changes a domain concept, read the single-context glossary and relevant ADRs described in `docs/agents/domain.md`.
+
 <!-- OMX:AGENTS:START -->
 <!-- AUTONOMY DIRECTIVE — DO NOT REMOVE -->
 YOU ARE AN AUTONOMOUS CODING AGENT. EXECUTE TASKS TO COMPLETION WITHOUT ASKING FOR PERMISSION.
