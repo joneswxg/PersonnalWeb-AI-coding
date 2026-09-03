@@ -29,7 +29,7 @@ const labels = {
   },
 } as const;
 
-function ResumeSection({
+function PortfolioProfileSection({
   title,
   emptyLabel,
   children,
@@ -123,7 +123,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           />
         </header>
 
-        <ResumeSection
+        <PortfolioProfileSection
           title={copy.skills}
           emptyLabel={copy.empty}
           isEmpty={portfolio.skills.length === 0}
@@ -136,9 +136,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </div>
             ))}
           </div>
-        </ResumeSection>
+        </PortfolioProfileSection>
 
-        <ResumeSection
+        <PortfolioProfileSection
           title={copy.experience}
           emptyLabel={copy.empty}
           isEmpty={portfolio.experience.length === 0}
@@ -162,9 +162,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </article>
             ))}
           </div>
-        </ResumeSection>
+        </PortfolioProfileSection>
 
-        <ResumeSection
+        <PortfolioProfileSection
           title={copy.education}
           emptyLabel={copy.empty}
           isEmpty={portfolio.education.length === 0}
@@ -179,9 +179,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </article>
             ))}
           </div>
-        </ResumeSection>
+        </PortfolioProfileSection>
 
-        <ResumeSection
+        <PortfolioProfileSection
           title={copy.certifications}
           emptyLabel={copy.empty}
           isEmpty={portfolio.certifications.length === 0}
@@ -199,7 +199,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </article>
             ))}
           </div>
-        </ResumeSection>
+        </PortfolioProfileSection>
       </div>
     </div>
   );

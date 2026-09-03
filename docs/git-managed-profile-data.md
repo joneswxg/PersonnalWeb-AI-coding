@@ -11,7 +11,8 @@ is no profile database and no in-site editor.
 2. Keep `version` set to `1`.
 3. Run `npm test -- src/lib/__tests__/portfolio-profile.test.ts` and
    `npm run typecheck`.
-4. Commit the Markdown change through the normal repository workflow.
+4. Run `./scripts/check.sh` before handoff or commit.
+5. Commit the Markdown change through the normal repository workflow.
 
 The parser rejects missing required values, unsupported versions, invalid JSON,
 and non-HTTPS public URLs. The avatar is an HTTPS Media Asset reference; the
@@ -48,5 +49,5 @@ its `zh` value; content is never translated automatically.
   and must record its repository, upstream repository, and localized Project
   Attribution.
 
-The four résumé arrays may be empty. The Portfolio Home renders a clear empty
+The four Portfolio Profile section arrays may be empty. The Portfolio Home renders a clear empty
 state for any section whose content has not yet been supplied.

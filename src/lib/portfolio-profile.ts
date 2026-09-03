@@ -85,6 +85,15 @@ export type PortfolioProfilePresentation = {
     date: string;
     credentialUrl?: string;
   }>;
+  featuredProjects: string[];
+  projectRules: {
+    excludedRepositories: string[];
+    admittedForks: Array<{
+      repository: string;
+      upstream: string;
+      attribution: string;
+    }>;
+  };
 };
 
 const PROFILE_DATA_BLOCK =
@@ -329,5 +338,14 @@ export function buildPortfolioProfilePresentation(
       date: item.date,
       credentialUrl: item.credentialUrl,
     })),
+    featuredProjects: data.featuredProjects,
+    projectRules: {
+      excludedRepositories: data.projectRules.excludedRepositories,
+      admittedForks: data.projectRules.admittedForks.map((fork) => ({
+        repository: fork.repository,
+        upstream: fork.upstream,
+        attribution: localize(fork.attribution, locale),
+      })),
+    },
   };
 }

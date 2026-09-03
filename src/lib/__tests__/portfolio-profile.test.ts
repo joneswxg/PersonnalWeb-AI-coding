@@ -42,7 +42,7 @@ describe("parsePortfolioProfileMarkdown", () => {
 });
 
 describe("buildPortfolioProfilePresentation", () => {
-  it("maps every résumé section for the default Chinese presentation", async () => {
+  it("maps every Portfolio Profile section for the default Chinese presentation", async () => {
     const source = await readFixture("profile-complete.md");
 
     const presentation = buildPortfolioProfilePresentation(
@@ -75,6 +75,14 @@ describe("buildPortfolioProfilePresentation", () => {
       name: "云架构认证",
       issuer: "示例机构",
     });
+    expect(presentation.featuredProjects).toEqual([
+      "project-one",
+      "project-two",
+      "project-three",
+    ]);
+    expect(presentation.projectRules.admittedForks[0].attribution).toBe(
+      "重构了数据模型并新增离线支持。",
+    );
   });
 
   it("uses English translations field by field and falls back to Chinese", async () => {
@@ -93,9 +101,12 @@ describe("buildPortfolioProfilePresentation", () => {
       "建立工程规范。",
     ]);
     expect(presentation.education[0].details).toBe("主修软件工程。");
+    expect(presentation.projectRules.admittedForks[0].attribution).toBe(
+      "Reworked the data model and added offline support.",
+    );
   });
 
-  it("preserves empty optional résumé sections for explicit empty handling", async () => {
+  it("preserves empty optional profile sections for explicit empty handling", async () => {
     const source = await readFixture("profile-empty-optional.md");
 
     const presentation = buildPortfolioProfilePresentation(
