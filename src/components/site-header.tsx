@@ -6,12 +6,12 @@ export async function SiteHeader() {
   const role = await getRole();
 
   return (
-    <header className="border-b">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+    <header className="border-b border-stone-200 bg-white">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-8">
         <Link href="/" className="text-lg font-semibold">
           joneswxg
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
+        <nav className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm">
           <Link href="/" className="text-muted-foreground hover:text-foreground">
             Portfolio
           </Link>
