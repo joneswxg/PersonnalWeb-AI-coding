@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Issues #4–#6：Public Project Directory、Owner Activity Snapshot 与 recruiter-first Portfolio Home 开发复盘"
+    />
+    <title>Issues #4–#6 开发复盘 · Personal Portfolio</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #18201d;
+        --muted: #66716c;
+        --paper: #f3f1ea;
+        --surface: rgba(255, 255, 255, 0.86);
+        --line: #d9ddd7;
+        --green: #126449;
+        --green-soft: #ddf1e7;
+        --amber: #a55b16;
+        --amber-soft: #f9ead6;
+        --blue: #315c88;
+        --blue-soft: #e3edf7;
+        --red: #984444;
+        --shadow: 0 24px 70px rgba(32, 42, 37, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 7% 2%, rgba(218, 237, 226, 0.95), transparent 33rem),
+          radial-gradient(circle at 96% 10%, rgba(250, 232, 207, 0.85), transparent 30rem),
+          var(--paper);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        line-height: 1.68;
+      }
+
+      a {
+        color: var(--green);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.2em;
+      }
+
+      code {
+        border: 1px solid #dfe3df;
+        border-radius: 0.42rem;
+        background: #f2f5f2;
+        padding: 0.08rem 0.36rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.9em;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 930px;
+        margin-bottom: 18px;
+        font-size: clamp(2.2rem, 6vw, 5rem);
+        line-height: 1.06;
+        letter-spacing: -0.052em;
+      }
+
+      h2 {
+        margin-bottom: 22px;
+        font-size: clamp(1.5rem, 3vw, 2.05rem);
+        letter-spacing: -0.028em;
+      }
+
+      h3 {
+        margin-bottom: 8px;
+        font-size: 1.06rem;
+      }
+
+      .shell {
+        width: min(1160px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 76px;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 34px;
+        background: rgba(255, 255, 255, 0.74);
+        box-shadow: var(--shadow);
+        padding: clamp(28px, 6vw, 76px);
+        backdrop-filter: blur(18px);
+      }
+
+      .hero::after {
+        position: absolute;
+        right: -90px;
+        bottom: -120px;
+        width: 340px;
+        height: 340px;
+        border-radius: 50%;
+        background: linear-gradient(
+          145deg,
+          rgba(18, 100, 73, 0.17),
+          rgba(165, 91, 22, 0.08)
+        );
+        content: "";
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        color: var(--green);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .lead {
+        max-width: 820px;
+        margin-bottom: 26px;
+        color: var(--muted);
+        font-size: clamp(1rem, 2vw, 1.18rem);
+      }
+
+      .pills,
+      .actions,
+      .status-row {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .pill {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.74);
+        padding: 7px 12px;
+        color: #43504a;
+        font-size: 0.84rem;
+        font-weight: 680;
+      }
+
+      .pill.success {
+        border-color: #bddbc9;
+        background: var(--green-soft);
+        color: var(--green);
+      }
+
+      .pill.pending {
+        border-color: #e2c69e;
+        background: var(--amber-soft);
+        color: #7d430f;
+      }
+
+      .actions {
+        margin-top: 30px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        min-height: 42px;
+        border: 1px solid var(--ink);
+        border-radius: 999px;
+        background: var(--ink);
+        padding: 8px 17px;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 720;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .button.secondary {
+        border-color: var(--line);
+        background: white;
+        color: var(--ink);
+      }
+
+      .section {
+        margin-top: 50px;
+      }
+
+      .metrics,
+      .grid-2,
+      .grid-3 {
+        display: grid;
+        gap: 16px;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .metric,
+      .card,
+      .issue-card {
+        border: 1px solid rgba(215, 220, 216, 0.92);
+        border-radius: 23px;
+        background: var(--surface);
+        box-shadow: 0 12px 35px rgba(38, 48, 42, 0.06);
+      }
+
+      .metric {
+        min-height: 142px;
+        padding: 22px;
+      }
+
+      .metric strong {
+        display: block;
+        margin-bottom: 3px;
+        color: var(--green);
+        font-size: clamp(1.8rem, 4vw, 2.7rem);
+        line-height: 1.15;
+        letter-spacing: -0.04em;
+      }
+
+      .metric span {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .card,
+      .issue-card {
+        padding: 27px;
+      }
+
+      .card p:last-child,
+      .card ul:last-child,
+      .issue-card p:last-child,
+      .issue-card ul:last-child {
+        margin-bottom: 0;
+      }
+
+      .list {
+        margin: 0;
+        padding-left: 1.2rem;
+      }
+
+      .list li + li {
+        margin-top: 8px;
+      }
+
+      .issue-number {
+        display: inline-grid;
+        width: 46px;
+        height: 46px;
+        margin-bottom: 19px;
+        place-items: center;
+        border-radius: 15px;
+        background: var(--ink);
+        color: white;
+        font-weight: 820;
+      }
+
+      .issue-card:nth-child(2) .issue-number {
+        background: var(--amber);
+      }
+
+      .issue-card:nth-child(3) .issue-number {
+        background: var(--blue);
+      }
+
+      .issue-card .state {
+        margin-top: 22px;
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        align-items: stretch;
+        gap: 14px;
+      }
+
+      .flow-node {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: white;
+        padding: 22px;
+      }
+
+      .flow-node strong {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--green);
+      }
+
+      .flow-arrow {
+        align-self: center;
+        color: var(--amber);
+        font-size: 1.6rem;
+        font-weight: 800;
+      }
+
+      .architecture {
+        display: grid;
+        gap: 12px;
+      }
+
+      .layer {
+        display: grid;
+        grid-template-columns: 9.5rem 1fr;
+        gap: 18px;
+        border-bottom: 1px solid var(--line);
+        padding: 14px 0;
+      }
+
+      .layer:last-child {
+        border-bottom: 0;
+      }
+
+      .layer strong {
+        color: var(--blue);
+      }
+
+      .breakdown {
+        display: grid;
+        gap: 15px;
+      }
+
+      .bar-row {
+        display: grid;
+        grid-template-columns: 11rem 1fr 4.5rem;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .bar-track {
+        height: 11px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e7e9e5;
+      }
+
+      .bar {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--green), #65a281);
+      }
+
+      .bar.amber {
+        background: linear-gradient(90deg, var(--amber), #d49855);
+      }
+
+      .bar.blue {
+        background: linear-gradient(90deg, var(--blue), #6f97bd);
+      }
+
+      .bar.gray {
+        background: linear-gradient(90deg, #75817b, #aab2ae);
+      }
+
+      .evidence {
+        border-left: 4px solid var(--green);
+        background: var(--green-soft);
+      }
+
+      .notice {
+        border-left: 4px solid var(--amber);
+        background: var(--amber-soft);
+      }
+
+      .info {
+        border-left: 4px solid var(--blue);
+        background: var(--blue-soft);
+      }
+
+      .review-list {
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .review-list li {
+        border: 1px solid rgba(18, 100, 73, 0.16);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.58);
+        padding: 14px 16px;
+      }
+
+      .review-list strong {
+        display: block;
+        color: var(--green);
+      }
+
+      .timeline {
+        position: relative;
+        margin: 0;
+        padding: 0 0 0 30px;
+        list-style: none;
+      }
+
+      .timeline::before {
+        position: absolute;
+        top: 6px;
+        bottom: 8px;
+        left: 7px;
+        width: 2px;
+        background: #cad4cd;
+        content: "";
+      }
+
+      .timeline li {
+        position: relative;
+        padding: 0 0 25px 12px;
+      }
+
+      .timeline li:last-child {
+        padding-bottom: 0;
+      }
+
+      .timeline li::before {
+        position: absolute;
+        top: 5px;
+        left: -30px;
+        width: 14px;
+        height: 14px;
+        border: 3px solid var(--paper);
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 0 1px var(--green);
+        content: "";
+      }
+
+      .time {
+        color: var(--amber);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.8rem;
+        font-weight: 760;
+      }
+
+      details {
+        border-top: 1px solid var(--line);
+        padding: 14px 0;
+      }
+
+      details:first-of-type {
+        border-top: 0;
+      }
+
+      summary {
+        font-weight: 760;
+        cursor: pointer;
+      }
+
+      .small {
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      footer {
+        margin-top: 50px;
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      @media (max-width: 900px) {
+        .metrics,
+        .grid-3 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .flow {
+          grid-template-columns: 1fr;
+        }
+
+        .flow-arrow {
+          justify-self: center;
+          transform: rotate(90deg);
+        }
+      }
+
+      @media (max-width: 680px) {
+        .metrics,
+        .grid-2,
+        .grid-3 {
+          grid-template-columns: 1fr;
+        }
+
+        .layer,
+        .bar-row {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+
+        .hero {
+          border-radius: 23px;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+
+        .shell {
+          width: 100%;
+          padding: 0;
+        }
+
+        .hero,
+        .metric,
+        .card,
+        .issue-card {
+          box-shadow: none;
+        }
+
+        .actions {
+          display: none;
+        }
+
+        details:not([open]) > *:not(summary) {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Engineering Retrospective · Issues #4–#6</p>
+        <h1>从公开项目目录到招聘者导向 Portfolio Home</h1>
+        <p class="lead">
+          本轮连续完成 Public Project Directory、Owner Activity Snapshot 与 recruiter-first
+          Portfolio Home：以 Git-managed 规则筛选公开作品，以可归属提交生成韧性活动快照，最终把个人资料、三个精选项目、GitHub 活动和 Technical Journal 汇聚成一致的作品集首页。
+        </p>
+        <div class="pills">
+          <span class="pill success">Issue #4 已推送并关闭</span>
+          <span class="pill pending">Issue #5 本地完成，待推送</span>
+          <span class="pill pending">Issue #6 本地完成，待推送</span>
+          <span class="pill success">116 / 116 测试通过</span>
+          <span class="pill">5 commits</span>
+          <span class="pill">2026-09-04</span>
+        </div>
+        <div class="actions">
+          <a class="button" href="https://github.com/joneswxg/PersonnalWeb-AI-coding/issues/4">Issue #4</a>
+          <a class="button secondary" href="https://github.com/joneswxg/PersonnalWeb-AI-coding/issues/5">Issue #5</a>
+          <a class="button secondary" href="https://github.com/joneswxg/PersonnalWeb-AI-coding/issues/6">Issue #6</a>
+          <button class="button secondary" type="button" onclick="window.print()">打印 / 导出 PDF</button>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="numbers-title">
+        <h2 id="numbers-title">交付数字</h2>
+        <div class="metrics">
+          <div class="metric"><strong>26</strong><span>相对 main 的变更文件</span></div>
+          <div class="metric"><strong>+2,650</strong><span>最终分支新增行</span></div>
+          <div class="metric"><strong>−36</strong><span>最终分支删除行</span></div>
+          <div class="metric"><strong>116</strong><span>最终通过的自动化测试</span></div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="sequence-title">
+        <p class="eyebrow">Delivery Sequence</p>
+        <h2 id="sequence-title">三个 Issue 形成一条完整产品链路</h2>
+        <div class="flow" aria-label="Issue 4 到 Issue 6 的依赖链">
+          <div class="flow-node">
+            <strong>#4 · Discover</strong>
+            从 GitHub 身份发现合格公开仓库，并映射为可浏览的 Project Overview。
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-node">
+            <strong>#5 · Prove</strong>
+            只统计本人创作提交，用持久化 Activity Snapshot 提供可核验工程活动。
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-node">
+            <strong>#6 · Present</strong>
+            将资料、项目、活动与文章预览组合成招聘者能快速理解的 Portfolio Home。
+          </div>
+        </div>
+      </section>
+
+      <section class="section grid-3" aria-label="各 Issue 交付">
+        <article class="issue-card">
+          <span class="issue-number">#4</span>
+          <h2>Public Project Directory</h2>
+          <ul class="list">
+            <li>服务端调用 GitHub REST API，凭据不进入浏览器代码。</li>
+            <li>排除 private、archived、普通 fork 与 Git-managed 排除项。</li>
+            <li>允许显式纳入 fork，并展示 upstream 与修改说明。</li>
+            <li>展示简介、主要语言、topics、更新时间、Stars、Forks 和 GitHub 链接。</li>
+            <li>缺失可选字段时保留稳定页面结构。</li>
+          </ul>
+          <p class="state"><strong>状态：</strong>commit <code>7153956</code> 已推送；Issue 于 2026-09-04 00:46（Asia/Shanghai）关闭。</p>
+        </article>
+
+        <article class="issue-card">
+          <span class="issue-number">#5</span>
+          <h2>Owner Activity Snapshot</h2>
+          <ul class="list">
+            <li>指标包括合格项目数、30 天活跃项目数、最近本人提交和主要语言分布。</li>
+            <li>只接受 GitHub author login 为 <code>joneswxg</code> 的提交。</li>
+            <li>使用真实滚动 30 × 24 小时窗口，并标注 Asia/Shanghai。</li>
+            <li>快照存入 PostgreSQL，24 小时内直接复用。</li>
+            <li>刷新失败时保留最后成功快照；从未成功时显示明确 unavailable 状态。</li>
+          </ul>
+          <p class="state"><strong>状态：</strong>commits <code>788ce34</code>、<code>9f29648</code>；本地完成，Issue 尚未关闭。</p>
+        </article>
+
+        <article class="issue-card">
+          <span class="issue-number">#6</span>
+          <h2>Recruiter-first Home</h2>
+          <ul class="list">
+            <li>首页固定呈现三个 Git-managed Featured Projects。</li>
+            <li>集成 Activity Summary 与角色过滤后的 Technical Journal preview。</li>
+            <li>中文优先，支持英文 presentation 与语言语义。</li>
+            <li>更新站点 metadata、导航与响应式版式，使产品定位统一为 Personal Portfolio。</li>
+            <li>无 GitHub Token 时仍保留三个项目链接，并显示刷新不可用状态。</li>
+          </ul>
+          <p class="state"><strong>状态：</strong>commits <code>cc1b12b</code>、<code>352bf1a</code>；本地完成，Issue 尚未关闭。</p>
+        </article>
+      </section>
+
+      <section class="section grid-2" aria-label="架构与韧性">
+        <article class="card">
+          <p class="eyebrow">Architecture</p>
+          <h2>代码职责分层</h2>
+          <div class="architecture">
+            <div class="layer"><strong>Git-managed content</strong><span>Profile Data 维护三个精选项目、排除规则与 admitted fork attribution。</span></div>
+            <div class="layer"><strong>GitHub adapters</strong><span>仓库、语言和 commit 请求集中在服务端 source adapter。</span></div>
+            <div class="layer"><strong>Domain models</strong><span>Project eligibility、Project Overview、Activity Window 和 Portfolio Home composition 保持纯逻辑可测。</span></div>
+            <div class="layer"><strong>Persistence</strong><span>Drizzle/PostgreSQL 只保存最新成功 Activity Snapshot，不让失败刷新覆盖有效数据。</span></div>
+            <div class="layer"><strong>Presentation</strong><span><code>/projects</code> 提供完整目录；<code>/</code> 提供招聘者导向摘要；<code>/journal</code> 保留文章浏览。</span></div>
+          </div>
+        </article>
+
+        <article class="card info">
+          <p class="eyebrow">Resilience Contract</p>
+          <h2>GitHub 刷新不是首页可用性的单点故障</h2>
+          <ol class="list">
+            <li>存在 24 小时内快照：直接返回 <code>fresh-snapshot</code>。</li>
+            <li>快照过期：尝试刷新仓库、语言和本人提交。</li>
+            <li>刷新成功：保存新快照并返回 <code>refreshed</code>。</li>
+            <li>刷新失败但存在历史快照：返回 <code>retained-snapshot</code>。</li>
+            <li>没有 Token 或从未成功采集：返回 <code>unavailable</code>，首页仍呈现 Git-managed 项目链接。</li>
+          </ol>
+        </article>
+      </section>
+
+      <section class="section" aria-labelledby="breakdown-title">
+        <h2 id="breakdown-title">最终分支代码构成</h2>
+        <article class="card">
+          <div class="breakdown">
+            <div class="bar-row">
+              <span>产品与领域代码</span>
+              <div class="bar-track" aria-label="产品与领域代码新增 1390 行"><div class="bar" style="width: 52.45%"></div></div>
+              <strong>1,390</strong>
+            </div>
+            <div class="bar-row">
+              <span>测试代码</span>
+              <div class="bar-track" aria-label="测试代码新增 697 行"><div class="bar amber" style="width: 26.30%"></div></div>
+              <strong>697</strong>
+            </div>
+            <div class="bar-row">
+              <span>Migration 与元数据</span>
+              <div class="bar-track" aria-label="Migration 与元数据新增 531 行"><div class="bar blue" style="width: 20.04%"></div></div>
+              <strong>531</strong>
+            </div>
+            <div class="bar-row">
+              <span>文档与内容</span>
+              <div class="bar-track" aria-label="文档与内容新增 32 行"><div class="bar gray" style="width: 1.21%"></div></div>
+              <strong>32</strong>
+            </div>
+          </div>
+          <p class="small" style="margin: 22px 0 0">
+            统计口径：<code>origin/main</code> 合并提交 <code>033077c</code> 到当前提交 <code>352bf1a</code>。分类按最终 diff 路径计算；Drizzle snapshot 自动生成内容单独列示。
+          </p>
+        </article>
+      </section>
+
+      <section class="section grid-2" aria-label="测试与 Review">
+        <article class="card evidence">
+          <p class="eyebrow">Verification Evidence</p>
+          <h2>最终验证结果</h2>
+          <ul class="list">
+            <li><strong>完整测试：</strong>24 个 test files，116 / 116 tests 通过。</li>
+            <li><strong>ESLint：</strong>通过，无报错。</li>
+            <li><strong>TypeScript：</strong><code>tsc --noEmit</code> 通过。</li>
+            <li><strong>Production build：</strong>Next.js 16.2.9 构建成功。</li>
+            <li><strong>数据库：</strong>隔离 PostgreSQL 数据库完成 migrations 与集成测试，验证后已删除。</li>
+            <li><strong>HTTP smoke：</strong>中文和英文首页均返回 200，并呈现三个项目、Activity 与 Journal 区块。</li>
+            <li><strong>外部请求测试：</strong>自动化测试使用 fake responses，不调用实时 GitHub。</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <p class="eyebrow">Two-axis Review</p>
+          <h2>评审发现与修复</h2>
+          <ul class="review-list">
+            <li><strong>Terminology</strong>将 cache/stale/fallback 表述统一为 Snapshot 领域语言。</li>
+            <li><strong>Rolling Window</strong>从日历边界改为真实滚动 30 × 24 小时。</li>
+            <li><strong>Refresh Failure</strong>仓库或语言请求失败时也能读取 retained snapshot。</li>
+            <li><strong>Missing Token</strong>Token 缺失不再让 Portfolio Home 抛错。</li>
+            <li><strong>Fork Attribution</strong>Featured Projects 补齐 upstream 与修改说明。</li>
+            <li><strong>Visibility Contract</strong>新增 source-level 测试，确认首页按当前角色获取文章。</li>
+            <li><strong>Architecture Docs</strong>同步更新 <code>/</code>、<code>/projects</code> 与 <code>/journal</code> 的路由职责。</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="section grid-2" aria-label="覆盖与边界">
+        <article class="card">
+          <p class="eyebrow">Behavior Coverage</p>
+          <h2>新增测试覆盖</h2>
+          <ul class="list">
+            <li>公开、私有、归档、排除仓库和 admitted fork 的准入矩阵。</li>
+            <li>GitHub repository 与 language responses 到 Project Overview 的映射。</li>
+            <li>本人 commit 归属、未来时间、30 天边界和最近提交选择。</li>
+            <li>Activity Snapshot 新鲜、刷新、保留和完全不可用状态。</li>
+            <li>PostgreSQL snapshot schema、保存与读取集成。</li>
+            <li>三个 Featured Projects 的顺序、唯一性与 unavailable fallback。</li>
+            <li>首页 Technical Journal 角色可见性数据源。</li>
+          </ul>
+        </article>
+
+        <article class="card notice">
+          <p class="eyebrow">Boundaries &amp; Remaining Work</p>
+          <h2>当前交付边界</h2>
+          <ul class="list">
+            <li>没有新增公开联系表单或可下载 PDF résumé。</li>
+            <li>没有新增定时任务；过期快照在请求期间刷新。</li>
+            <li>没有把 GitHub Token 暴露给客户端。</li>
+            <li>没有修改用户已有未跟踪的 <code>.agents/</code> 与 <code>skills-lock.json</code>。</li>
+            <li>Issue #5 和 #6 尚未推送或关闭，因此没有声明对应 GitHub CI 结果。</li>
+            <li>浏览器后端在最终会话中不可用；完成了 HTTP smoke，但没有截图级视觉验收。</li>
+            <li>本地开发若缺少 <code>AUTH_SECRET</code> 会显示既有 Auth.js 警告，但不阻止首页返回 200。</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="section grid-2" aria-label="时间线与提交">
+        <article class="card">
+          <p class="eyebrow">Timeline</p>
+          <h2>核心开发时间线</h2>
+          <ol class="timeline">
+            <li><span class="time">00:42</span><h3>Issue #4 功能提交</h3><p><code>7153956</code> 建立 GitHub-backed Public Project Directory。</p></li>
+            <li><span class="time">00:46</span><h3>Issue #4 推送并关闭</h3><p>完整检查通过，双轴 Review 为 0 findings，并在 Issue 留下验证记录。</p></li>
+            <li><span class="time">01:00</span><h3>Issue #5 Activity Snapshot</h3><p><code>788ce34</code> 加入 owner activity、数据库持久化与 Dashboard。</p></li>
+            <li><span class="time">01:07</span><h3>Issue #5 Review 修复</h3><p><code>9f29648</code> 修正滚动窗口、刷新韧性和领域术语。</p></li>
+            <li><span class="time">08:25</span><h3>Issue #6 Portfolio Home</h3><p><code>cc1b12b</code> 集成 Profile、Featured Projects、Activity 与 Journal。</p></li>
+            <li><span class="time">08:35</span><h3>Issue #6 Review 修复</h3><p><code>352bf1a</code> 完成 unavailable fallback、fork attribution、visibility test 与文档同步。</p></li>
+          </ol>
+          <p class="small" style="margin: 22px 0 0">时间均为 2026-09-04 Asia/Shanghai；按 Git commit timestamp 与 GitHub Issue 记录整理。</p>
+        </article>
+
+        <article class="card">
+          <p class="eyebrow">Git History</p>
+          <h2>提交与远端状态</h2>
+          <details open="open">
+            <summary><code>7153956</code> · Public Project Directory</summary>
+            <p>6 files，新增 580 行；已推送到 <code>origin/feat/4-public-project-directory</code>。</p>
+          </details>
+          <details open="open">
+            <summary><code>788ce34</code> · Owner Activity Snapshot</summary>
+            <p>加入核心聚合、Dashboard、PostgreSQL migration 与持久化测试。</p>
+          </details>
+          <details open="open">
+            <summary><code>9f29648</code> · Activity Review 修复</summary>
+            <p>建立目录解析服务，强化刷新失败与 retained snapshot 行为。</p>
+          </details>
+          <details open="open">
+            <summary><code>cc1b12b</code> · Recruiter Portfolio Home</summary>
+            <p>完成首页组合 read model、UI、导航、metadata 与真实 Featured Project 配置。</p>
+          </details>
+          <details open="open">
+            <summary><code>352bf1a</code> · Portfolio Home Review 修复</summary>
+            <p>补齐无 Token 降级、fork attribution、source-level visibility tests 与架构文档。</p>
+          </details>
+          <p class="small" style="margin: 18px 0 0">当前分支 <code>feat/6-recruiter-portfolio-home</code> 相对 <code>origin/main</code> 领先 5 commits。</p>
+        </article>
+      </section>
+
+      <section class="section" aria-labelledby="files-title">
+        <h2 id="files-title">关键文件导航</h2>
+        <article class="card grid-3">
+          <div>
+            <h3>GitHub 项目与活动</h3>
+            <ul class="list">
+              <li><a href="../../src/lib/github-projects.ts">src/lib/github-projects.ts</a></li>
+              <li><a href="../../src/lib/github-projects-source.ts">src/lib/github-projects-source.ts</a></li>
+              <li><a href="../../src/lib/github-activity.ts">src/lib/github-activity.ts</a></li>
+              <li><a href="../../src/lib/portfolio-project-directory.ts">src/lib/portfolio-project-directory.ts</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>首页与页面</h3>
+            <ul class="list">
+              <li><a href="../../src/app/page.tsx">src/app/page.tsx</a></li>
+              <li><a href="../../src/app/projects/page.tsx">src/app/projects/page.tsx</a></li>
+              <li><a href="../../src/lib/portfolio-home.ts">src/lib/portfolio-home.ts</a></li>
+              <li><a href="../../src/lib/portfolio-home-source.ts">src/lib/portfolio-home-source.ts</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>内容、数据库与文档</h3>
+            <ul class="list">
+              <li><a href="../../content/portfolio-profile.md">content/portfolio-profile.md</a></li>
+              <li><a href="../../src/lib/activity-snapshot-store.ts">src/lib/activity-snapshot-store.ts</a></li>
+              <li><a href="../../src/db/schema.ts">src/db/schema.ts</a></li>
+              <li><a href="../../docs/architecture.md">docs/architecture.md</a></li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <section class="section grid-2" aria-label="工具与数据来源">
+        <article class="card">
+          <p class="eyebrow">Toolchain</p>
+          <h2>使用的工程工具</h2>
+          <ul class="list">
+            <li>Git 与 GitHub CLI：Issue、分支、提交、推送和状态核对。</li>
+            <li>Vitest：纯领域逻辑、source boundary 与 PostgreSQL integration tests。</li>
+            <li>TypeScript、ESLint 与 Next.js build：静态检查和生产构建。</li>
+            <li>Docker、PostgreSQL 与 Drizzle Kit：隔离数据库验证。</li>
+            <li>Review agents：Standards 与 Spec 两轴审查。</li>
+            <li>HTTP smoke：使用真实服务端配置验证中英文动态首页。</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <p class="eyebrow">Evidence Sources</p>
+          <h2>报告数据口径</h2>
+          <ul class="list">
+            <li>Git diff：文件数、新增/删除行和代码分类。</li>
+            <li>Git history：commit hash、时间与提交说明。</li>
+            <li>GitHub Issues：#4–#6 当前开关状态与 #4 验证评论。</li>
+            <li>最终 <code>./scripts/check.sh</code> 输出：lint、typecheck、tests 与 build。</li>
+            <li>开发会话记录：双轴 Review、HTTP smoke 与环境限制。</li>
+          </ul>
+        </article>
+      </section>
+
+      <footer>
+        <p>
+          报告生成于 2026-09-04（Asia/Shanghai）。基线为 <code>033077c</code>，最终功能提交为
+          <code>352bf1a</code>。本报告只描述已获得证据的状态，不把本地完成误写为已推送、已关闭或 GitHub CI 已通过。
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
