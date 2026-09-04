@@ -34,6 +34,8 @@ const labels = {
     allProjects: "浏览全部公开项目",
     projectsUnavailable: "GitHub 项目信息暂时无法刷新，请稍后重试。",
     noSummary: "此仓库暂未提供项目简介。",
+    attribution: "项目归属说明",
+    upstream: "上游项目",
     activity: "GitHub 活动",
     activityIntroduction: "只统计由 joneswxg 创作并可归属的公开提交。",
     eligibleProjects: "符合规则的项目",
@@ -66,6 +68,8 @@ const labels = {
     allProjects: "Browse all public projects",
     projectsUnavailable: "GitHub project data cannot be refreshed right now.",
     noSummary: "This repository does not provide a project summary yet.",
+    attribution: "Project attribution",
+    upstream: "Upstream",
     activity: "GitHub Activity",
     activityIntroduction: "Counts only attributable public commits authored by joneswxg.",
     eligibleProjects: "Eligible projects",
@@ -90,6 +94,10 @@ function formatDate(value: string | Date, locale: PortfolioLocale) {
     dateStyle: "medium",
     timeZone: "Asia/Shanghai",
   }).format(new Date(value));
+}
+
+function localizedRoute(path: string, locale: PortfolioLocale) {
+  return locale === "en" ? `${path}?lang=en` : path;
 }
 
 function PortfolioProfileSection({
@@ -119,7 +127,7 @@ function PortfolioProfileSection({
   );
 }
 
-function FeaturedProjectCard({
+function FeaturedProjectOverview({
   project,
   locale,
 }: {
@@ -156,6 +164,15 @@ function FeaturedProjectCard({
             </span>
           ))}
         </div>
+      )}
+      {project.attribution && (
+        <aside className="mt-5 rounded-2xl bg-amber-50 p-4 text-sm leading-6 text-stone-700">
+          <p className="font-semibold text-stone-900">{copy.attribution}</p>
+          <p className="mt-1">
+            {copy.upstream}: {project.attribution.upstream}
+          </p>
+          <p className="mt-1">{project.attribution.summary}</p>
+        </aside>
       )}
       <div className="mt-5 flex items-center gap-4 border-t border-stone-100 pt-4 text-xs text-stone-500">
         {project.stars !== undefined && (
@@ -213,7 +230,7 @@ function ActivitySummary({
           </h2>
         </div>
         <Link
-          href={locale === "en" ? "/projects?lang=en" : "/projects"}
+          href={localizedRoute("/projects", locale)}
           className="inline-flex items-center gap-2 text-sm font-medium text-amber-200"
         >
           {copy.allProjects} <ArrowRight className="size-4" aria-hidden="true" />
@@ -315,7 +332,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 {copy.github}
               </a>
               <Link
-                href={locale === "en" ? "/journal?lang=en" : "/journal"}
+                href={localizedRoute("/journal", locale)}
                 className="rounded-full border border-stone-300 bg-white px-5 py-2.5 text-sm font-medium text-stone-800 transition hover:border-stone-500"
               >
                 {copy.journal}
@@ -401,19 +418,18 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <p className="text-sm font-semibold tracking-[0.18em] text-amber-700 uppercase">{copy.featured}</p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-950">{copy.featuredIntroduction}</h2>
             </div>
-            <Link href={locale === "en" ? "/projects?lang=en" : "/projects"} className="inline-flex items-center gap-2 text-sm font-medium text-stone-800">
+            <Link href={localizedRoute("/projects", locale)} className="inline-flex items-center gap-2 text-sm font-medium text-stone-800">
               {copy.allProjects} <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </div>
-          {home.projectDirectoryStatus === "unavailable" ? (
+          {home.projectDirectoryStatus === "unavailable" && (
             <p className="mt-8 rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-12 text-center text-stone-500">{copy.projectsUnavailable}</p>
-          ) : (
-            <div className="mt-8 grid gap-5 lg:grid-cols-3">
-              {home.featuredProjects.map((project) => (
-                <FeaturedProjectCard key={project.fullName} project={project} locale={locale} />
-              ))}
-            </div>
           )}
+          <div className="mt-8 grid gap-5 lg:grid-cols-3">
+            {home.featuredProjects.map((project) => (
+              <FeaturedProjectOverview key={project.fullName} project={project} locale={locale} />
+            ))}
+          </div>
         </section>
 
         <ActivitySummary result={home.activity} locale={locale} />
@@ -424,7 +440,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <p className="text-sm font-semibold tracking-[0.18em] text-amber-700 uppercase">{copy.journalPreview}</p>
               <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-stone-950">{copy.journalIntroduction}</h2>
             </div>
-            <Link href="/journal" className="inline-flex items-center gap-2 text-sm font-medium text-stone-800">
+            <Link href={localizedRoute("/journal", locale)} className="inline-flex items-center gap-2 text-sm font-medium text-stone-800">
               {copy.allArticles} <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </div>

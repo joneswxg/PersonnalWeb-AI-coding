@@ -4,7 +4,10 @@ import {
   buildPublicProjectDirectory,
   type GitHubRepository,
 } from "@/lib/github-projects";
-import type { GitHubCommit } from "@/lib/github-activity";
+import {
+  resolveActivitySnapshot,
+  type GitHubCommit,
+} from "@/lib/github-activity";
 import { databaseActivitySnapshotStore } from "@/lib/activity-snapshot-store";
 import { loadPortfolioProfilePresentation } from "@/lib/portfolio-profile-source";
 import type { PortfolioLocale } from "@/lib/portfolio-profile";
@@ -170,7 +173,18 @@ export async function loadPublicProjectDirectoryWithActivity(
 ) {
   const profile = await loadPortfolioProfilePresentation(locale);
   const githubIdentity = githubUsernameFromProfileUrl(profile.profile.githubUrl);
-  const source = createGitHubProjectSource(githubIdentity, githubToken());
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) {
+    const activity = await resolveActivitySnapshot({
+      githubIdentity,
+      store: databaseActivitySnapshotStore,
+      now,
+      refresh: () => Promise.reject(new Error("GITHUB_TOKEN is not set.")),
+    });
+    return { directoryStatus: "unavailable" as const, projects: [], activity };
+  }
+
+  const source = createGitHubProjectSource(githubIdentity, token);
   return resolvePublicProjectDirectory({
     githubIdentity,
     source,

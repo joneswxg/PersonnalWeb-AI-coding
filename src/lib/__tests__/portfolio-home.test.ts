@@ -115,6 +115,33 @@ describe("buildPortfolioHome", () => {
     ).toThrow("exactly three Featured Projects");
   });
 
+  it("keeps exactly three configured project links when GitHub is unavailable", async () => {
+    const markdown = await readFile(fixturePath, "utf8");
+    const portfolio = buildPortfolioProfilePresentation(
+      parsePortfolioProfileMarkdown(markdown),
+      "zh",
+    );
+
+    const home = buildPortfolioHome({
+      portfolio,
+      directory: {
+        directoryStatus: "unavailable",
+        projects: [],
+        activity: { status: "unavailable", snapshot: null },
+      },
+      visibleArticles: [],
+    });
+
+    expect(home.featuredProjects.map((item) => item.name)).toEqual([
+      "project-one",
+      "project-two",
+      "project-three",
+    ]);
+    expect(home.featuredProjects[0]?.githubUrl).toBe(
+      "https://github.com/example/project-one",
+    );
+  });
+
   it("keeps the Git-Managed Profile Data configured with three Featured Projects", async () => {
     const markdown = await readFile(portfolioSourcePath, "utf8");
     const portfolio = parsePortfolioProfileMarkdown(markdown);

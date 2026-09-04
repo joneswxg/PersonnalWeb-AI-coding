@@ -18,6 +18,37 @@ export type PortfolioHome = {
 
 const repositoryKey = (name: string) => name.toLocaleLowerCase("en-US");
 
+function configuredProjectLinks(
+  portfolio: PortfolioProfilePresentation,
+): PublicProjectDirectoryResult["projects"] {
+  const githubProfileUrl = portfolio.profile.githubUrl.replace(/\/$/, "");
+  const admittedForks = new Map(
+    portfolio.projectRules.admittedForks.map((fork) => [
+      repositoryKey(fork.repository),
+      fork,
+    ]),
+  );
+
+  return portfolio.featuredProjects.map((name) => {
+    const admittedFork = admittedForks.get(repositoryKey(name));
+    return {
+      name,
+      fullName: `${new URL(githubProfileUrl).pathname.split("/").filter(Boolean)[0]}/${name}`,
+      githubUrl: `${githubProfileUrl}/${encodeURIComponent(name)}`,
+      technologies: [],
+      topics: [],
+      ...(admittedFork
+        ? {
+            attribution: {
+              upstream: admittedFork.upstream,
+              summary: admittedFork.attribution,
+            },
+          }
+        : {}),
+    };
+  });
+}
+
 export function buildPortfolioHome({
   portfolio,
   directory,
@@ -33,7 +64,7 @@ export function buildPortfolioHome({
 
   const featuredProjects =
     directory.directoryStatus === "unavailable"
-      ? []
+      ? configuredProjectLinks(portfolio)
       : configuredProjects.map((name) => {
           const project = directory.projects.find(
             (candidate) => repositoryKey(candidate.name) === repositoryKey(name),
