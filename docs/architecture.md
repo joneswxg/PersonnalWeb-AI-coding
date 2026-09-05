@@ -136,9 +136,11 @@ Known runtime variables include:
 
 - `DATABASE_URL` for PostgreSQL.
 - `OWNER_GITHUB_USERNAME` for owner role resolution.
-- `GITHUB_TOKEN` for server-side GitHub repository, language, and commit reads.
-  A fine-grained personal access token needs read-only Contents access to the
-  public repositories displayed by the portfolio.
+- `GITHUB_TOKEN` for reliable server-side GitHub repository, language, and
+  commit reads. Public repositories can use an anonymous fallback, but GitHub
+  limits anonymous requests to 60 per hour. A fine-grained personal access token
+  needs read-only Contents access to the public repositories displayed by the
+  portfolio.
 - GitHub OAuth and NextAuth/Auth.js secrets required by the authentication provider.
 
 Keep concrete values in local or deployment environments only. Do not commit secrets.
