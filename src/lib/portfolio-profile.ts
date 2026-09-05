@@ -31,6 +31,13 @@ export type PortfolioProfileData = {
     summary: LocalizedText;
     highlights: LocalizedText[];
   }>;
+  clientProjects: Array<{
+    name: LocalizedText;
+    role: LocalizedText;
+    scale?: string;
+    summary: LocalizedText;
+    highlights: LocalizedText[];
+  }>;
   education: Array<{
     institution: LocalizedText;
     qualification: LocalizedText;
@@ -73,6 +80,13 @@ export type PortfolioProfilePresentation = {
     role: string;
     start: string;
     end: string;
+    summary: string;
+    highlights: string[];
+  }>;
+  clientProjects: Array<{
+    name: string;
+    role: string;
+    scale?: string;
     summary: string;
     highlights: string[];
   }>;
@@ -213,6 +227,23 @@ function profileDataAt(value: unknown): PortfolioProfileData {
         ),
       };
     }),
+    clientProjects:
+      root.clientProjects === undefined
+        ? []
+        : arrayAt(root.clientProjects, "clientProjects", (value, path) => {
+            const project = objectAt(value, path);
+            return {
+              name: localizedTextAt(project.name, `${path}.name`),
+              role: localizedTextAt(project.role, `${path}.role`),
+              scale: optionalStringAt(project.scale, `${path}.scale`),
+              summary: localizedTextAt(project.summary, `${path}.summary`),
+              highlights: arrayAt(
+                project.highlights,
+                `${path}.highlights`,
+                localizedTextAt,
+              ),
+            };
+          }),
     education: arrayAt(root.education, "education", (value, path) => {
       const education = objectAt(value, path);
       return {
@@ -343,6 +374,15 @@ export function buildPortfolioProfilePresentation(
       end: localize(item.end, locale),
       summary: localize(item.summary, locale),
       highlights: item.highlights.map((highlight) => localize(highlight, locale)),
+    })),
+    clientProjects: data.clientProjects.map((project) => ({
+      name: localize(project.name, locale),
+      role: localize(project.role, locale),
+      scale: project.scale,
+      summary: localize(project.summary, locale),
+      highlights: project.highlights.map((highlight) =>
+        localize(highlight, locale),
+      ),
     })),
     education: data.education.map((item) => ({
       institution: localize(item.institution, locale),

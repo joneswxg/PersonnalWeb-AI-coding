@@ -38,6 +38,18 @@
       ]
     }
   ],
+  "clientProjects": [
+    {
+      "name": { "zh": "示例私有云建设", "en": "Example Private Cloud Program" },
+      "role": { "zh": "高级系统工程师", "en": "Senior System Engineer" },
+      "scale": "300K",
+      "summary": { "zh": "建设标准化企业私有云平台。", "en": "Built a standardized enterprise private cloud platform." },
+      "highlights": [
+        { "zh": "完成现状调研与演进规划。", "en": "Assessed the current estate and planned its evolution." },
+        { "zh": "推动关键业务迁移上线。" }
+      ]
+    }
+  ],
   "education": [
     {
       "institution": { "zh": "示例大学", "en": "Example University" },

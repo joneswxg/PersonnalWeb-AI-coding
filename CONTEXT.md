@@ -40,6 +40,10 @@ _Avoid_: Project card, repository metadata, GitHub preview
 The chronological public account of the owner’s professional roles, responsibilities, and outcomes.
 _Avoid_: Work history, employment record, career timeline
 
+**Client Project Experience**:
+A curated account of enterprise customer engagements that presents the project context, the owner’s role, and delivered outcomes independently from Career Experience and code-based Portfolio Projects.
+_Avoid_: Career Experience, Featured Project, Portfolio Project
+
 **Educational Background**:
 The public account of the owner’s formal education and relevant academic achievements.
 _Avoid_: Education, schooling, degree list

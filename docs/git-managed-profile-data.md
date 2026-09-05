@@ -38,6 +38,10 @@ its `zh` value; content is never translated automatically.
 - `skills` groups localized skill names under localized category names.
 - `experience` defines Career Experience entries with organization, role,
   dates, summary, and outcome highlights.
+- `clientProjects` defines Client Project Experience entries with a project
+  name, role, optional scale, context summary, and delivery highlights. These
+  customer engagements are kept separate from Career Experience and GitHub
+  Portfolio Projects.
 - `education` defines Educational Background entries. `details` is optional.
 - `certifications` defines Professional Certification entries.
   `credentialUrl` is optional and must use HTTPS when present.
@@ -50,5 +54,5 @@ its `zh` value; content is never translated automatically.
   and must record its repository, upstream repository, and localized Project
   Attribution.
 
-The four Portfolio Profile section arrays may be empty. The Portfolio Home renders a clear empty
+The five Portfolio Profile section arrays may be empty. The Portfolio Home renders a clear empty
 state for any section whose content has not yet been supplied.

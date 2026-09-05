@@ -149,14 +149,6 @@ editing rules.
         {
           "zh": "主导虚拟化、vSAN、VDI、业务连续性、灾备和数据保护等方案设计，提升客户IT敏捷性与稳定性。",
           "en": "Led solution design across virtualization, vSAN, VDI, business continuity, disaster recovery, and data protection to improve IT agility and resilience."
-        },
-        {
-          "zh": "为TCL与立讯精密规划多数据中心标准化、私有云与混合云演进路径，支持IaaS和Kubernetes工作负载落地。",
-          "en": "Planned multi-data-center standardization and private/hybrid cloud roadmaps for TCL and Luxshare, supporting IaaS and Kubernetes workloads."
-        },
-        {
-          "zh": "为比亚迪财险和开泰银行设计私有云、统一运维与容器云方案，推动核心业务系统迁移上云。",
-          "en": "Designed private cloud, unified operations, and container platform solutions for BYD Insurance and KASIKORNBANK, enabling core business systems to migrate to cloud platforms."
         }
       ]
     },
@@ -248,6 +240,124 @@ editing rules.
         {
           "zh": "参与网络割接和日常运维，保障内部OA网络连续性。",
           "en": "Supported network cutovers and daily operations to maintain office network continuity."
+        }
+      ]
+    }
+  ],
+  "clientProjects": [
+    {
+      "name": {
+        "zh": "TCL 混合云数据中心建设",
+        "en": "TCL Hybrid Cloud Data Center Program"
+      },
+      "role": {
+        "zh": "高级系统工程师",
+        "en": "Senior System Engineer"
+      },
+      "scale": "300K",
+      "summary": {
+        "zh": "面向TCL集团资源整合与海外电商发展需求，规划统一管理企业基础架构资源的混合云平台，并支持关键业务系统迁移。",
+        "en": "Planned a hybrid cloud platform to unify TCL's infrastructure resources, support global e-commerce growth, and enable critical application migration."
+      },
+      "highlights": [
+        {
+          "zh": "调研各业务单元的数据中心资源与应用部署现状，与客户IT团队制定数据中心现代化方案。",
+          "en": "Assessed data center resources and application deployments across business units and developed a modernization roadmap with the customer's IT team."
+        },
+        {
+          "zh": "推动虚拟机与Kubernetes的标准化IaaS交付，并支持MES、PLM、SMT等关键系统迁移至本地私有云。",
+          "en": "Standardized IaaS delivery for virtual machines and Kubernetes and supported the migration of MES, PLM, SMT, and other critical systems to the private cloud."
+        },
+        {
+          "zh": "规划海外公有云与无缝迁移方案，并设计三大可用区的高可用与灾备架构。",
+          "en": "Planned public cloud and seamless migration options for overseas services and designed high-availability and disaster recovery architecture across three availability zones."
+        }
+      ]
+    },
+    {
+      "name": {
+        "zh": "立讯精密私有云数据中心建设",
+        "en": "Luxshare Private Cloud Data Center Program"
+      },
+      "role": {
+        "zh": "高级系统工程师",
+        "en": "Senior System Engineer"
+      },
+      "scale": "400K",
+      "summary": {
+        "zh": "围绕业务连续性、数据中心标准化和资源全生命周期管理，为立讯精密规划集团级私有云平台。",
+        "en": "Planned an enterprise private cloud platform for Luxshare focused on business continuity, data center standardization, and full infrastructure lifecycle management."
+      },
+      "highlights": [
+        {
+          "zh": "调研集团、东莞、昆山和江西四大数据中心，并基于现有硬件制定VMware产品与解决方案组合。",
+          "en": "Assessed four data centers in the group, Dongguan, Kunshan, and Jiangxi and designed a VMware solution portfolio around the existing hardware estate."
+        },
+        {
+          "zh": "讲解VMware SDDC全栈云基础架构，并与客户制定数据中心标准化、业务连续性和私有云建设的1至3年演进路线。",
+          "en": "Presented the VMware SDDC full-stack architecture and developed a one-to-three-year roadmap covering standardization, business continuity, and private cloud adoption."
+        },
+        {
+          "zh": "协同合作伙伴推动一期项目实施及标准化IaaS服务上线。",
+          "en": "Worked with delivery partners to implement the first phase and launch standardized IaaS services."
+        }
+      ]
+    },
+    {
+      "name": {
+        "zh": "比亚迪财险私有云项目",
+        "en": "BYD Insurance Private Cloud Program"
+      },
+      "role": {
+        "zh": "高级系统工程师",
+        "en": "Senior System Engineer"
+      },
+      "scale": "200K",
+      "summary": {
+        "zh": "针对按项目分散部署、人工操作重复和资源利用率不足的问题，规划统一的私有云IaaS与运维平台。",
+        "en": "Designed a unified private cloud IaaS and operations platform to replace fragmented project-based deployments, repetitive manual work, and inefficient resource use."
+      },
+      "highlights": [
+        {
+          "zh": "梳理服务器、操作系统、应用与数据库资源，完成资源池整合、存储网络规划及标准化服务目录设计。",
+          "en": "Assessed servers, operating systems, applications, and databases and designed resource consolidation, storage and network architecture, and a standardized service catalog."
+        },
+        {
+          "zh": "推动云管平台与自动化交付体系建设，实现四套分散资源池统一纳管与自动化IaaS交付。",
+          "en": "Introduced cloud management and automated delivery to unify four distributed resource pools and automate IaaS provisioning."
+        },
+        {
+          "zh": "建设覆盖虚拟化、Kubernetes、数据库与中间件的统一监控和集中日志分析体系。",
+          "en": "Built unified monitoring and centralized log analytics across virtualization, Kubernetes, databases, and middleware."
+        }
+      ]
+    },
+    {
+      "name": {
+        "zh": "开泰银行数据中心改造",
+        "en": "KASIKORNBANK Data Center Modernization"
+      },
+      "role": {
+        "zh": "高级系统工程师",
+        "en": "Senior System Engineer"
+      },
+      "scale": "400K",
+      "summary": {
+        "zh": "结合开泰银行深圳分行数字化转型目标，规划核心应用私有云平台和数据中心云化演进路线。",
+        "en": "Planned a private cloud platform for core applications and a data center cloud roadmap aligned with the digital transformation of KASIKORNBANK's Shenzhen branch."
+      },
+      "highlights": [
+        {
+          "zh": "调研现有IT架构与云化需求，设计VMware企业级云基础架构和高可用IaaS平台。",
+          "en": "Assessed the existing IT architecture and cloud requirements and designed a VMware enterprise cloud architecture with a highly available IaaS platform."
+        },
+        {
+          "zh": "结合VMware Tanzu规划容器云平台与DevOps工具链整合。",
+          "en": "Planned a container platform and DevOps toolchain integration with VMware Tanzu."
+        },
+        {
+          "zh": "在2022至2024年推动生产系统全面上云，支持核心交易、供应链金融、风控和信贷流程等系统迁移上线。",
+          "en": "Supported full production cloud adoption from 2022 to 2024, including migrations for core banking, value chain financing, risk management, and lending workflow systems."
         }
       ]
     }

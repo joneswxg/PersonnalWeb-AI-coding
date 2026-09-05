@@ -29,6 +29,7 @@ const portfolio: PortfolioProfilePresentation = {
   },
   skills: [],
   experience: [],
+  clientProjects: [],
   education: [],
   certifications: [],
   featuredProjects: ["one", "two", "three"],

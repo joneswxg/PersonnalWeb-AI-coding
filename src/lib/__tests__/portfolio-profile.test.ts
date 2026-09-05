@@ -25,6 +25,10 @@ describe("parsePortfolioProfileMarkdown", () => {
     expect(profile.profile.name).toEqual({ zh: "王小明", en: "Xiaoming Wang" });
     expect(profile.profile.gender).toEqual({ zh: "男", en: "Male" });
     expect(profile.profile.location).toEqual({ zh: "深圳", en: "Shenzhen" });
+    expect(profile.clientProjects[0]).toMatchObject({
+      name: { zh: "示例私有云建设", en: "Example Private Cloud Program" },
+      scale: "300K",
+    });
     expect(profile.featuredProjects).toEqual([
       "project-one",
       "project-two",
@@ -71,6 +75,12 @@ describe("buildPortfolioProfilePresentation", () => {
       end: "至今",
       highlights: ["改进发布可靠性。", "建立工程规范。"],
     });
+    expect(presentation.clientProjects[0]).toMatchObject({
+      name: "示例私有云建设",
+      role: "高级系统工程师",
+      scale: "300K",
+      highlights: ["完成现状调研与演进规划。", "推动关键业务迁移上线。"],
+    });
     expect(presentation.education[0]).toMatchObject({
       institution: "示例大学",
       qualification: "计算机科学学士",
@@ -106,6 +116,14 @@ describe("buildPortfolioProfilePresentation", () => {
       "Improved release reliability.",
       "建立工程规范。",
     ]);
+    expect(presentation.clientProjects[0]).toMatchObject({
+      name: "Example Private Cloud Program",
+      role: "Senior System Engineer",
+      highlights: [
+        "Assessed the current estate and planned its evolution.",
+        "推动关键业务迁移上线。",
+      ],
+    });
     expect(presentation.education[0].details).toBe("主修软件工程。");
     expect(presentation.projectRules.admittedForks[0].attribution).toBe(
       "Reworked the data model and added offline support.",
@@ -122,6 +140,7 @@ describe("buildPortfolioProfilePresentation", () => {
 
     expect(presentation.skills).toEqual([]);
     expect(presentation.experience).toEqual([]);
+    expect(presentation.clientProjects).toEqual([]);
     expect(presentation.education).toEqual([]);
     expect(presentation.certifications).toEqual([]);
     expect(presentation.profile.gender).toBeUndefined();

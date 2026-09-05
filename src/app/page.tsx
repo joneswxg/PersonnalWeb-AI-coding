@@ -23,6 +23,8 @@ const labels = {
     profile: "个人作品集",
     skills: "核心技能",
     experience: "职业经历",
+    clientProjects: "项目经验",
+    projectScale: "项目规模",
     education: "教育背景",
     certifications: "专业认证",
     empty: "内容尚未提供",
@@ -57,6 +59,8 @@ const labels = {
     profile: "Personal Portfolio",
     skills: "Core skills",
     experience: "Career experience",
+    clientProjects: "Client project experience",
+    projectScale: "Project scale",
     education: "Educational background",
     certifications: "Professional certifications",
     empty: "Content not supplied yet",
@@ -383,6 +387,45 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 {item.highlights.length > 0 && (
                   <ul className="mt-4 list-disc space-y-2 pl-5 text-stone-600">
                     {item.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+                  </ul>
+                )}
+              </article>
+            ))}
+          </div>
+        </PortfolioProfileSection>
+
+        <PortfolioProfileSection
+          title={copy.clientProjects}
+          emptyLabel={copy.empty}
+          isEmpty={portfolio.clientProjects.length === 0}
+        >
+          <div className="space-y-6">
+            {portfolio.clientProjects.map((project) => (
+              <article
+                key={project.name}
+                className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8"
+              >
+                <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                  <div>
+                    <h3 className="text-xl font-semibold tracking-tight text-stone-950">
+                      {project.name}
+                    </h3>
+                    <p className="mt-1 text-sm font-medium text-amber-800">
+                      {project.role}
+                    </p>
+                  </div>
+                  {project.scale && (
+                    <p className="shrink-0 text-sm text-stone-500">
+                      {copy.projectScale}: {project.scale}
+                    </p>
+                  )}
+                </div>
+                <p className="mt-5 leading-7 text-stone-700">{project.summary}</p>
+                {project.highlights.length > 0 && (
+                  <ul className="mt-4 list-disc space-y-2 pl-5 text-stone-600">
+                    {project.highlights.map((highlight) => (
+                      <li key={highlight}>{highlight}</li>
+                    ))}
                   </ul>
                 )}
               </article>
