@@ -29,11 +29,13 @@ describe("parsePortfolioProfileMarkdown", () => {
       name: { zh: "示例私有云建设", en: "Example Private Cloud Program" },
       scale: "300K",
     });
-    expect(profile.featuredProjects).toEqual([
-      "project-one",
-      "project-two",
-      "project-three",
-    ]);
+    expect(
+      profile.featuredProjects.map((project) => project.repository),
+    ).toEqual(["project-one", "project-two", "project-three"]);
+    expect(profile.featuredProjects[0]).toMatchObject({
+      summary: { zh: "本地项目简介一。", en: "Local project summary one." },
+      technologies: ["TypeScript", "Next.js"],
+    });
     expect(profile.projectRules.admittedForks[0]).toMatchObject({
       repository: "adapted-fork",
       upstream: "upstream/original",
@@ -89,11 +91,11 @@ describe("buildPortfolioProfilePresentation", () => {
       name: "云架构认证",
       issuer: "示例机构",
     });
-    expect(presentation.featuredProjects).toEqual([
-      "project-one",
-      "project-two",
-      "project-three",
-    ]);
+    expect(presentation.featuredProjects[0]).toEqual({
+      repository: "project-one",
+      summary: "本地项目简介一。",
+      technologies: ["TypeScript", "Next.js"],
+    });
     expect(presentation.projectRules.admittedForks[0].attribution).toBe(
       "重构了数据模型并新增离线支持。",
     );
@@ -125,6 +127,9 @@ describe("buildPortfolioProfilePresentation", () => {
       ],
     });
     expect(presentation.education[0].details).toBe("主修软件工程。");
+    expect(presentation.featuredProjects[0].summary).toBe(
+      "Local project summary one.",
+    );
     expect(presentation.projectRules.admittedForks[0].attribution).toBe(
       "Reworked the data model and added offline support.",
     );

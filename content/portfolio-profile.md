@@ -479,9 +479,30 @@ editing rules.
     }
   ],
   "featuredProjects": [
-    "GIF-Download-Tool",
-    "sub2api-ha",
-    "todo-list-app"
+    {
+      "repository": "GIF-Download-Tool",
+      "summary": {
+        "zh": "面向 CSV 数据处理的工具箱，提供带图形界面的 GIF 多线程批量下载、完整性校验与缺失文件检查，并通过 Flask 代理支持 Google 和百度翻译、字段映射及结果导出。",
+        "en": "A CSV data toolbox with GUI-based concurrent GIF downloads, integrity and missing-file checks, plus a Flask proxy for Google and Baidu translation, column mapping, and result export."
+      },
+      "technologies": ["Python", "Flask", "HTML"]
+    },
+    {
+      "repository": "sub2api-ha",
+      "summary": {
+        "zh": "基于 Sub2API 的高可用 Kubernetes 部署实践，通过多角色运行时、启动门控、就绪探针和工作负载隔离增强服务的可靠性与可运维性。",
+        "en": "A highly available Kubernetes deployment of Sub2API with role-based runtimes, startup gates, readiness probes, and workload isolation for improved reliability and operations."
+      },
+      "technologies": ["Kubernetes", "Go", "PostgreSQL"]
+    },
+    {
+      "repository": "todo-list-app",
+      "summary": {
+        "zh": "基于 Spring Boot、Hibernate 和 H2 的任务管理 REST API，覆盖用户、任务、状态与分配关系，并扩展按编号查询及未完成已分配任务接口。",
+        "en": "A task-management REST API built with Spring Boot, Hibernate, and H2, covering users, tasks, statuses, and assignments with additional lookup and pending-assignment endpoints."
+      },
+      "technologies": ["Java", "Spring Boot", "Hibernate"]
+    }
   ],
   "projectRules": {
     "excludedRepositories": [

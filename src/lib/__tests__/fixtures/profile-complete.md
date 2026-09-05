@@ -67,7 +67,23 @@
       "credentialUrl": "https://credentials.example.com/123"
     }
   ],
-  "featuredProjects": ["project-one", "project-two", "project-three"],
+  "featuredProjects": [
+    {
+      "repository": "project-one",
+      "summary": { "zh": "本地项目简介一。", "en": "Local project summary one." },
+      "technologies": ["TypeScript", "Next.js"]
+    },
+    {
+      "repository": "project-two",
+      "summary": { "zh": "本地项目简介二。", "en": "Local project summary two." },
+      "technologies": ["Go"]
+    },
+    {
+      "repository": "project-three",
+      "summary": { "zh": "本地项目简介三。", "en": "Local project summary three." },
+      "technologies": ["Java"]
+    }
+  ],
   "projectRules": {
     "excludedRepositories": ["tutorial-repository"],
     "admittedForks": [

@@ -51,7 +51,11 @@ export type PortfolioProfileData = {
     date: string;
     credentialUrl?: string;
   }>;
-  featuredProjects: string[];
+  featuredProjects: Array<{
+    repository: string;
+    summary: LocalizedText;
+    technologies: string[];
+  }>;
   projectRules: {
     excludedRepositories: string[];
     admittedForks: Array<{
@@ -103,7 +107,11 @@ export type PortfolioProfilePresentation = {
     date: string;
     credentialUrl?: string;
   }>;
-  featuredProjects: string[];
+  featuredProjects: Array<{
+    repository: string;
+    summary: string;
+    technologies: string[];
+  }>;
   projectRules: {
     excludedRepositories: string[];
     admittedForks: Array<{
@@ -286,7 +294,18 @@ function profileDataAt(value: unknown): PortfolioProfileData {
     featuredProjects: arrayAt(
       root.featuredProjects,
       "featuredProjects",
-      stringAt,
+      (value, path) => {
+        const project = objectAt(value, path);
+        return {
+          repository: stringAt(project.repository, `${path}.repository`),
+          summary: localizedTextAt(project.summary, `${path}.summary`),
+          technologies: arrayAt(
+            project.technologies,
+            `${path}.technologies`,
+            stringAt,
+          ),
+        };
+      },
     ),
     projectRules: readProjectRules(root.projectRules),
   };
@@ -397,7 +416,11 @@ export function buildPortfolioProfilePresentation(
       date: item.date,
       credentialUrl: item.credentialUrl,
     })),
-    featuredProjects: data.featuredProjects,
+    featuredProjects: data.featuredProjects.map((project) => ({
+      repository: project.repository,
+      summary: localize(project.summary, locale),
+      technologies: project.technologies,
+    })),
     projectRules: {
       excludedRepositories: data.projectRules.excludedRepositories,
       admittedForks: data.projectRules.admittedForks.map((fork) => ({

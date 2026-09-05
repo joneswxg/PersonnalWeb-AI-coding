@@ -29,13 +29,14 @@ function configuredProjectLinks(
     ]),
   );
 
-  return portfolio.featuredProjects.map((name) => {
-    const admittedFork = admittedForks.get(repositoryKey(name));
+  return portfolio.featuredProjects.map((project) => {
+    const admittedFork = admittedForks.get(repositoryKey(project.repository));
     return {
-      name,
-      fullName: `${new URL(githubProfileUrl).pathname.split("/").filter(Boolean)[0]}/${name}`,
-      githubUrl: `${githubProfileUrl}/${encodeURIComponent(name)}`,
-      technologies: [],
+      name: project.repository,
+      fullName: `${new URL(githubProfileUrl).pathname.split("/").filter(Boolean)[0]}/${project.repository}`,
+      githubUrl: `${githubProfileUrl}/${encodeURIComponent(project.repository)}`,
+      summary: project.summary,
+      technologies: project.technologies,
       topics: [],
       ...(admittedFork
         ? {
@@ -57,7 +58,9 @@ export function buildPortfolioHome({
   const configuredProjects = portfolio.featuredProjects;
   if (
     configuredProjects.length !== 3 ||
-    new Set(configuredProjects.map(repositoryKey)).size !== 3
+    new Set(
+      configuredProjects.map((project) => repositoryKey(project.repository)),
+    ).size !== 3
   ) {
     throw new Error("Portfolio Home must configure exactly three Featured Projects.");
   }
@@ -65,14 +68,22 @@ export function buildPortfolioHome({
   const featuredProjects =
     directory.directoryStatus === "unavailable"
       ? configuredProjectLinks(portfolio)
-      : configuredProjects.map((name) => {
+      : configuredProjects.map((configuredProject) => {
           const project = directory.projects.find(
-            (candidate) => repositoryKey(candidate.name) === repositoryKey(name),
+            (candidate) =>
+              repositoryKey(candidate.name) ===
+              repositoryKey(configuredProject.repository),
           );
           if (!project) {
-            throw new Error(`Configured Featured Project is not eligible: ${name}.`);
+            throw new Error(
+              `Configured Featured Project is not eligible: ${configuredProject.repository}.`,
+            );
           }
-          return project;
+          return {
+            ...project,
+            summary: configuredProject.summary,
+            technologies: configuredProject.technologies,
+          };
         });
 
   return {

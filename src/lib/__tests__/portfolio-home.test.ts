@@ -90,6 +90,8 @@ describe("buildPortfolioHome", () => {
       "project-two",
       "project-three",
     ]);
+    expect(home.featuredProjects[0]?.summary).toBe("本地项目简介一。");
+    expect(home.featuredProjects[1]?.technologies).toEqual(["Go"]);
     expect(home.activity).toBe(activity);
     expect(home.journalPreview.map((item) => item.id)).toEqual([4, 3, 2]);
   });
@@ -100,7 +102,7 @@ describe("buildPortfolioHome", () => {
       parsePortfolioProfileMarkdown(markdown),
       "zh",
     );
-    portfolio.featuredProjects = ["project-one"];
+    portfolio.featuredProjects = [portfolio.featuredProjects[0]!];
 
     expect(() =>
       buildPortfolioHome({
@@ -140,17 +142,20 @@ describe("buildPortfolioHome", () => {
     expect(home.featuredProjects[0]?.githubUrl).toBe(
       "https://github.com/example/project-one",
     );
+    expect(home.featuredProjects[0]?.summary).toBe("本地项目简介一。");
+    expect(home.featuredProjects[0]?.technologies).toEqual([
+      "TypeScript",
+      "Next.js",
+    ]);
   });
 
   it("keeps the Git-Managed Profile Data configured with three Featured Projects", async () => {
     const markdown = await readFile(portfolioSourcePath, "utf8");
     const portfolio = parsePortfolioProfileMarkdown(markdown);
 
-    expect(portfolio.featuredProjects).toEqual([
-      "GIF-Download-Tool",
-      "sub2api-ha",
-      "todo-list-app",
-    ]);
+    expect(
+      portfolio.featuredProjects.map((project) => project.repository),
+    ).toEqual(["GIF-Download-Tool", "sub2api-ha", "todo-list-app"]);
     expect(
       portfolio.projectRules.admittedForks.map((fork) => ({
         repository: fork.repository,

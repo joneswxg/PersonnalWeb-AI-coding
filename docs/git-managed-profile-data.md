@@ -45,9 +45,10 @@ its `zh` value; content is never translated automatically.
 - `education` defines Educational Background entries. `details` is optional.
 - `certifications` defines Professional Certification entries.
   `credentialUrl` is optional and must use HTTPS when present.
-- `featuredProjects` lists exactly three distinct repository names selected for
-  Featured Project treatment. Each name must resolve to an eligible Portfolio
-  Project after exclusions and attributed-fork admissions are applied.
+- `featuredProjects` defines exactly three Featured Projects. Each entry records
+  the exact repository name, a localized portfolio summary, and the technologies
+  shown on the Portfolio Home. Each repository must resolve to an eligible
+  Portfolio Project after exclusions and attributed-fork admissions are applied.
 - `projectRules.excludedRepositories` lists repositories excluded by editorial
   choice.
 - `projectRules.admittedForks` explicitly admits a substantively modified fork
@@ -57,11 +58,14 @@ its `zh` value; content is never translated automatically.
 ## Choosing Featured Projects
 
 Edit `featuredProjects` in `content/portfolio-profile.md` to change the three
-projects shown under Featured Projects on the Portfolio Home. Use the exact
-GitHub repository names, including letter case, and keep exactly three distinct
-entries. A selected repository must be public, unarchived, and allowed by
-`projectRules`: repositories in `excludedRepositories` cannot be selected, and
-forks must also have a matching entry in `admittedForks`.
+projects shown under Featured Projects on the Portfolio Home. Each entry uses
+`repository`, localized `summary`, and `technologies`. The summary and technology
+labels are Git-managed so the Portfolio Home remains complete when GitHub is
+unavailable; live GitHub data only supplements signals such as stars and forks.
+Use exact repository names, including letter case, and keep exactly three
+distinct entries. A selected repository must be public, unarchived, and allowed
+by `projectRules`: repositories in `excludedRepositories` cannot be selected,
+and forks must also have a matching entry in `admittedForks`.
 
 The five Portfolio Profile section arrays may be empty. The Portfolio Home renders a clear empty
 state for any section whose content has not yet been supplied.

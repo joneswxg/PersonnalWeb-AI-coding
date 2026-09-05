@@ -32,7 +32,11 @@ const portfolio: PortfolioProfilePresentation = {
   clientProjects: [],
   education: [],
   certifications: [],
-  featuredProjects: ["one", "two", "three"],
+  featuredProjects: ["one", "two", "three"].map((repository) => ({
+    repository,
+    summary: `${repository} summary`,
+    technologies: ["TypeScript"],
+  })),
   projectRules: { excludedRepositories: [], admittedForks: [] },
 };
 
