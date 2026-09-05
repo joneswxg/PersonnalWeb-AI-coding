@@ -8,36 +8,36 @@ export async function SiteHeader() {
   return (
     <header className="border-b border-stone-200 bg-white">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-8">
-        <Link href="/" className="text-lg font-semibold">
+        <Link href="/" className="text-xl font-semibold text-black">
           joneswxg
         </Link>
-        <nav className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm">
-          <Link href="/" className="text-muted-foreground hover:text-foreground">
+        <nav className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 text-base font-medium text-black">
+          <Link href="/" className="text-black hover:text-stone-700">
             Portfolio
           </Link>
-          <Link href="/projects" className="text-muted-foreground hover:text-foreground">
+          <Link href="/projects" className="text-black hover:text-stone-700">
             Projects
           </Link>
-          <Link href="/journal" className="text-muted-foreground hover:text-foreground">
+          <Link href="/journal" className="text-black hover:text-stone-700">
             Technical Journal
           </Link>
-          <Link href="/search" className="text-muted-foreground hover:text-foreground">
+          <Link href="/search" className="text-black hover:text-stone-700">
             Search
           </Link>
           {role === "owner" && (
             <>
-              <Link href="/admin/articles" className="text-muted-foreground hover:text-foreground">
+              <Link href="/admin/articles" className="text-black hover:text-stone-700">
                 Article Management
               </Link>
               <Link
                 href="/admin/categories"
-                className="text-muted-foreground hover:text-foreground"
+                className="text-black hover:text-stone-700"
               >
                 Categories
               </Link>
               <Link
                 href="/admin/trusted-users"
-                className="text-muted-foreground hover:text-foreground"
+                className="text-black hover:text-stone-700"
               >
                 Trusted users
               </Link>

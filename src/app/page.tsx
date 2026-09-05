@@ -116,7 +116,7 @@ function PortfolioProfileSection({
   return (
     <section className="border-t border-stone-200 py-10 sm:py-14">
       <div className="grid gap-6 md:grid-cols-[12rem_1fr] md:gap-12">
-        <h2 className="text-sm font-semibold tracking-[0.18em] text-stone-500 uppercase">
+        <h2 className="text-lg font-semibold tracking-[0.12em] text-black uppercase">
           {title}
         </h2>
         {isEmpty ? (
@@ -363,8 +363,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div className="grid gap-7 sm:grid-cols-2">
             {portfolio.skills.map((group) => (
               <div key={group.category}>
-                <h3 className="font-semibold text-stone-900">{group.category}</h3>
-                <p className="mt-2 leading-7 text-stone-600">{group.items.join(" · ")}</p>
+                <h3 className="text-lg font-semibold text-black">{group.category}</h3>
+                <p className="mt-2 text-lg leading-8 text-black">{group.items.join(" · ")}</p>
               </div>
             ))}
           </div>
