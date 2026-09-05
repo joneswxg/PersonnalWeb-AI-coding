@@ -5,6 +5,7 @@ import { loadPortfolioHome } from "@/lib/portfolio-home-source";
 import type { PortfolioLocale } from "@/lib/portfolio-profile";
 import type { ProjectOverview } from "@/lib/github-projects";
 import type { ActivitySnapshotResult } from "@/lib/github-activity";
+import { GitHubRefreshButton } from "@/components/github-refresh-button";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,7 @@ const labels = {
     featuredIntroduction: "具有代表性的工程实践与可核验成果。",
     allProjects: "浏览全部公开项目",
     projectsUnavailable: "GitHub 项目信息暂时无法刷新，请稍后重试。",
+    retryGitHub: "重新获取 GitHub 数据",
     noSummary: "此仓库暂未提供项目简介。",
     attribution: "项目归属说明",
     upstream: "上游项目",
@@ -71,6 +73,7 @@ const labels = {
     featuredIntroduction: "Selected engineering work with verifiable outcomes.",
     allProjects: "Browse all public projects",
     projectsUnavailable: "GitHub project data cannot be refreshed right now.",
+    retryGitHub: "Retry GitHub data",
     noSummary: "This repository does not provide a project summary yet.",
     attribution: "Project attribution",
     upstream: "Upstream",
@@ -473,7 +476,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </Link>
           </div>
           {home.projectDirectoryStatus === "unavailable" && (
-            <p className="mt-8 rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-12 text-center text-stone-500">{copy.projectsUnavailable}</p>
+            <div className="mt-8 flex flex-col items-center gap-4 rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-10 text-center text-stone-500">
+              <p>{copy.projectsUnavailable}</p>
+              <GitHubRefreshButton locale={locale} label={copy.retryGitHub} />
+            </div>
           )}
           <div className="mt-8 grid gap-5 lg:grid-cols-3">
             {home.featuredProjects.map((project) => (

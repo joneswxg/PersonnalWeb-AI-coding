@@ -5,6 +5,7 @@ import { loadPublicProjectDirectoryWithActivity } from "@/lib/github-projects-so
 import type { PortfolioLocale } from "@/lib/portfolio-profile";
 import type { ProjectOverview } from "@/lib/github-projects";
 import type { ActivitySnapshotResult } from "@/lib/github-activity";
+import { GitHubRefreshButton } from "@/components/github-refresh-button";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,7 @@ const labels = {
       "这里收录符合公开作品规则的 GitHub 项目，项目信息直接来自仓库，并由版本控制的作品集规则进行筛选。",
     empty: "目前没有符合公开作品规则的项目。",
     directoryUnavailable: "GitHub 项目目录暂时无法刷新，请稍后重试。",
+    retryGitHub: "重新获取 GitHub 数据",
     noSummary: "此仓库暂未提供项目简介。",
     technologies: "主要技术",
     topics: "主题",
@@ -53,6 +55,7 @@ const labels = {
       "Eligible GitHub work appears here from repository data, filtered by the editorial rules maintained with the portfolio profile.",
     empty: "No projects currently meet the public portfolio rules.",
     directoryUnavailable: "The GitHub project directory cannot be refreshed right now.",
+    retryGitHub: "Retry GitHub data",
     noSummary: "This repository does not provide a project summary yet.",
     technologies: "Principal technologies",
     topics: "Topics",
@@ -342,9 +345,10 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
         <ActivityDashboard result={activity} locale={locale} />
 
         {directoryStatus === "unavailable" ? (
-          <p className="rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-16 text-center text-stone-500">
-            {copy.directoryUnavailable}
-          </p>
+          <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-14 text-center text-stone-500">
+            <p>{copy.directoryUnavailable}</p>
+            <GitHubRefreshButton locale={locale} label={copy.retryGitHub} />
+          </div>
         ) : projects.length === 0 ? (
           <p className="rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-16 text-center text-stone-500">
             {copy.empty}

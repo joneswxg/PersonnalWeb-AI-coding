@@ -54,5 +54,14 @@ its `zh` value; content is never translated automatically.
   and must record its repository, upstream repository, and localized Project
   Attribution.
 
+## Choosing Featured Projects
+
+Edit `featuredProjects` in `content/portfolio-profile.md` to change the three
+projects shown under Featured Projects on the Portfolio Home. Use the exact
+GitHub repository names, including letter case, and keep exactly three distinct
+entries. A selected repository must be public, unarchived, and allowed by
+`projectRules`: repositories in `excludedRepositories` cannot be selected, and
+forks must also have a matching entry in `admittedForks`.
+
 The five Portfolio Profile section arrays may be empty. The Portfolio Home renders a clear empty
 state for any section whose content has not yet been supplied.
