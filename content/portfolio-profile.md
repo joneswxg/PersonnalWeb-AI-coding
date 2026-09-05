@@ -360,6 +360,76 @@ editing rules.
           "en": "Supported full production cloud adoption from 2022 to 2024, including migrations for core banking, value chain financing, risk management, and lending workflow systems."
         }
       ]
+    },
+    {
+      "name": {
+        "zh": "其他金融行业基础架构项目",
+        "en": "Additional Financial Services Infrastructure Projects"
+      },
+      "role": {
+        "zh": "高级系统工程师",
+        "en": "Senior System Engineer"
+      },
+      "scale": "150K+",
+      "summary": {
+        "zh": "面向基金、证券等中小金融客户提供数据中心、虚拟化与安全加固方案支持，协同销售和合作伙伴推进需求澄清、技术交流及项目落地。",
+        "en": "Provided data-center, virtualization, and security-hardening solution support for asset-management and securities customers, working with sales and partners from discovery through delivery."
+      },
+      "highlights": [
+        {
+          "zh": "南方基金：数据中心容灾与安全加固项目，项目规模 150K。",
+          "en": "Southern Asset Management: data-center disaster-recovery and security-hardening project, 150K."
+        },
+        {
+          "zh": "鹏华基金：虚拟化平台项目，项目规模 150K。",
+          "en": "Penghua Fund: virtualization platform project, 150K."
+        },
+        {
+          "zh": "持续跟进博时基金、长城证券、金元证券、万和证券及第一创业等客户的基础架构机会。",
+          "en": "Supported ongoing infrastructure opportunities with Bosera Funds, Great Wall Securities, Jinyuan Securities, Vanho Securities, and First Capital Securities."
+        }
+      ]
+    },
+    {
+      "name": {
+        "zh": "其他制造业与互联网基础架构项目",
+        "en": "Additional Manufacturing and Internet Infrastructure Projects"
+      },
+      "role": {
+        "zh": "高级系统工程师",
+        "en": "Senior System Engineer"
+      },
+      "scale": "100K–420K",
+      "summary": {
+        "zh": "面向制造业及互联网客户提供虚拟化、容器云、桌面云、云服务商和灾备解决方案支持，覆盖方案设计、技术验证、投标支持及项目推进。",
+        "en": "Delivered virtualization, container cloud, desktop cloud, cloud-provider, and disaster-recovery solution support for manufacturing and internet customers, covering design, validation, bid support, and delivery progression."
+      },
+      "highlights": [
+        {
+          "zh": "德赛西威：数据中心全栈虚拟化与容器云平台，VCF + VDI（Linux with GPU），320K。",
+          "en": "Desay SV: full-stack data-center virtualization and container cloud with VCF + GPU-enabled Linux VDI, 320K."
+        },
+        {
+          "zh": "南陵科技：VMware Cloud Provider Program，VCF 一期 100K、二期预计 250K。",
+          "en": "Nanling Technology: VMware Cloud Provider Program, VCF phase one 100K and phase two projected at 250K."
+        },
+        {
+          "zh": "中海壳牌：数据中心虚拟化与容灾，vSphere + SRM，160K。",
+          "en": "CNOOC and Shell Petrochemicals: data-center virtualization and disaster recovery with vSphere + SRM, 160K."
+        },
+        {
+          "zh": "金蝶：研发桌面云，Horizon 2,400 点虚拟桌面，240K。",
+          "en": "Kingdee: R&D desktop cloud with 2,400 Horizon virtual desktops, 240K."
+        },
+        {
+          "zh": "OPPO：2,000 点桌面云（VDI）项目，420K。",
+          "en": "OPPO: 2,000-seat virtual desktop infrastructure project, 420K."
+        },
+        {
+          "zh": "腾讯：游戏部门基础架构项目，180K。",
+          "en": "Tencent: gaming-division infrastructure project, 180K."
+        }
+      ]
     }
   ],
   "education": [
@@ -480,14 +550,6 @@ editing rules.
   ],
   "featuredProjects": [
     {
-      "repository": "GIF-Download-Tool",
-      "summary": {
-        "zh": "面向 CSV 数据处理的工具箱，提供带图形界面的 GIF 多线程批量下载、完整性校验与缺失文件检查，并通过 Flask 代理支持 Google 和百度翻译、字段映射及结果导出。",
-        "en": "A CSV data toolbox with GUI-based concurrent GIF downloads, integrity and missing-file checks, plus a Flask proxy for Google and Baidu translation, column mapping, and result export."
-      },
-      "technologies": ["Python", "Flask", "HTML"]
-    },
-    {
       "repository": "sub2api-ha",
       "summary": {
         "zh": "基于 Sub2API 的高可用 Kubernetes 部署实践，通过多角色运行时、启动门控、就绪探针和工作负载隔离增强服务的可靠性与可运维性。",
@@ -496,12 +558,20 @@ editing rules.
       "technologies": ["Kubernetes", "Go", "PostgreSQL"]
     },
     {
-      "repository": "todo-list-app",
+      "repository": "PersonnalWeb-AI-coding",
       "summary": {
-        "zh": "基于 Spring Boot、Hibernate 和 H2 的任务管理 REST API，覆盖用户、任务、状态与分配关系，并扩展按编号查询及未完成已分配任务接口。",
-        "en": "A task-management REST API built with Spring Boot, Hibernate, and H2, covering users, tasks, statuses, and assignments with additional lookup and pending-assignment endpoints."
+        "zh": "个人作品集与技术博客，使用 Git 管理职业履历和项目经验，并整合 GitHub 项目展示、活动快照、文章发布与权限控制能力。",
+        "en": "A personal portfolio and technical journal that manages career content in Git, with GitHub project presentation, activity snapshots, article publishing, and access control."
       },
-      "technologies": ["Java", "Spring Boot", "Hibernate"]
+      "technologies": ["Next.js", "TypeScript", "PostgreSQL"]
+    },
+    {
+      "repository": "Stronix-App-V1_-DB-version",
+      "summary": {
+        "zh": "基于 SwiftUI 和 SQLite 的 iOS 健身训练记录应用，涵盖训练动作、训练计划、过程记录、历史分析及身体测量等本地数据管理功能。",
+        "en": "An iOS fitness-training tracker built with SwiftUI and SQLite, covering exercise content, workout plans, session records, training history, and body-measurement data."
+      },
+      "technologies": ["Swift", "SwiftUI", "SQLite"]
     }
   ],
   "projectRules": {

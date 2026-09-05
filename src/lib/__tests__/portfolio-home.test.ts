@@ -149,13 +149,52 @@ describe("buildPortfolioHome", () => {
     ]);
   });
 
+  it("keeps a locally configured Featured Project when it is absent from GitHub results", async () => {
+    const markdown = await readFile(fixturePath, "utf8");
+    const portfolio = buildPortfolioProfilePresentation(
+      parsePortfolioProfileMarkdown(markdown),
+      "zh",
+    );
+
+    const home = buildPortfolioHome({
+      portfolio,
+      directory: {
+        directoryStatus: "available",
+        projects: [project("project-one"), project("project-three")],
+        activity,
+      },
+      visibleArticles: [],
+    });
+
+    expect(home.featuredProjects.map((item) => item.name)).toEqual([
+      "project-one",
+      "project-two",
+      "project-three",
+    ]);
+    expect(home.featuredProjects[1]).toMatchObject({
+      summary: "本地项目简介二。",
+      technologies: ["Go"],
+    });
+  });
+
   it("keeps the Git-Managed Profile Data configured with three Featured Projects", async () => {
     const markdown = await readFile(portfolioSourcePath, "utf8");
     const portfolio = parsePortfolioProfileMarkdown(markdown);
 
     expect(
       portfolio.featuredProjects.map((project) => project.repository),
-    ).toEqual(["GIF-Download-Tool", "sub2api-ha", "todo-list-app"]);
+    ).toEqual([
+      "sub2api-ha",
+      "PersonnalWeb-AI-coding",
+      "Stronix-App-V1_-DB-version",
+    ]);
+    expect(portfolio.featuredProjects[2]).toMatchObject({
+      technologies: ["Swift", "SwiftUI", "SQLite"],
+    });
+    expect(portfolio.clientProjects.slice(-2).map((project) => project.name.zh)).toEqual([
+      "其他金融行业基础架构项目",
+      "其他制造业与互联网基础架构项目",
+    ]);
     expect(
       portfolio.projectRules.admittedForks.map((fork) => ({
         repository: fork.repository,

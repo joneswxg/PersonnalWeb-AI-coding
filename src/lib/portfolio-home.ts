@@ -65,19 +65,19 @@ export function buildPortfolioHome({
     throw new Error("Portfolio Home must configure exactly three Featured Projects.");
   }
 
+  const localFeaturedProjects = configuredProjectLinks(portfolio);
   const featuredProjects =
     directory.directoryStatus === "unavailable"
-      ? configuredProjectLinks(portfolio)
-      : configuredProjects.map((configuredProject) => {
+      ? localFeaturedProjects
+      : configuredProjects.map((configuredProject, index) => {
+          const fallbackProject = localFeaturedProjects[index]!;
           const project = directory.projects.find(
             (candidate) =>
               repositoryKey(candidate.name) ===
               repositoryKey(configuredProject.repository),
           );
           if (!project) {
-            throw new Error(
-              `Configured Featured Project is not eligible: ${configuredProject.repository}.`,
-            );
+            return fallbackProject!;
           }
           return {
             ...project,
