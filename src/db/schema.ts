@@ -7,8 +7,10 @@ import {
   index,
   primaryKey,
   customType,
+  jsonb,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+import type { ActivitySnapshot } from "@/lib/github-activity";
 
 export const articleStatusValues = ["draft", "private", "public"] as const;
 export type ArticleStatus = (typeof articleStatusValues)[number];
@@ -96,4 +98,15 @@ export const trustedUsers = pgTable("trusted_users", {
   id: serial("id").primaryKey(),
   githubUsername: text("github_username").notNull().unique(),
   addedAt: timestamp("added_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const activitySnapshots = pgTable("activity_snapshots", {
+  githubIdentity: text("github_identity").primaryKey(),
+  schemaVersion: integer("schema_version").notNull(),
+  collectedAt: timestamp("collected_at", { withTimezone: true }).notNull(),
+  source: text("source").notNull(),
+  window: jsonb("activity_window")
+    .$type<ActivitySnapshot["window"]>()
+    .notNull(),
+  metrics: jsonb("metrics").$type<ActivitySnapshot["metrics"]>().notNull(),
 });

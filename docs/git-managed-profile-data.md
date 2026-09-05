@@ -41,8 +41,9 @@ its `zh` value; content is never translated automatically.
 - `education` defines Educational Background entries. `details` is optional.
 - `certifications` defines Professional Certification entries.
   `credentialUrl` is optional and must use HTTPS when present.
-- `featuredProjects` lists repository names selected for Featured Project
-  treatment. Project rendering is implemented by the GitHub project feature.
+- `featuredProjects` lists exactly three distinct repository names selected for
+  Featured Project treatment. Each name must resolve to an eligible Portfolio
+  Project after exclusions and attributed-fork admissions are applied.
 - `projectRules.excludedRepositories` lists repositories excluded by editorial
   choice.
 - `projectRules.admittedForks` explicitly admits a substantively modified fork

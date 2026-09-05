@@ -32,7 +32,14 @@
 
 The public application is route-driven under `src/app/`:
 
-- `/` lists articles visible to the current role and shows category/tag navigation.
+- `/` renders the recruiter-first Portfolio Home with Git-managed profile data,
+  exactly three Featured Projects, an Activity Snapshot summary, and a
+  role-filtered Technical Journal preview.
+- `/projects` renders the Public Project Directory and Activity Dashboard from
+  GitHub repository data, with a retained snapshot or explicit unavailable
+  state when GitHub cannot be refreshed.
+- `/journal` lists articles visible to the current role and shows category/tag
+  navigation.
 - `/articles/[slug]` renders an article detail page after role-based visibility checks.
 - `/categories/[slug]` filters article listings by category.
 - `/tags/[slug]` filters article listings by tag.

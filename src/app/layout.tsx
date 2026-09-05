@@ -14,8 +14,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Learning Notes",
-  description: "A personal learning log.",
+  title: {
+    default: "joneswxg | Personal Portfolio",
+    template: "%s | joneswxg",
+  },
+  description:
+    "The professional portfolio, public engineering projects, and Technical Journal of joneswxg.",
 };
 
 export default function RootLayout({
@@ -25,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="zh-CN"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">

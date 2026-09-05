@@ -1,6 +1,18 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { loadPortfolioProfilePresentation } from "@/lib/portfolio-profile-source";
+import { ArrowRight, ExternalLink, GitFork, Star } from "lucide-react";
+import { loadPortfolioHome } from "@/lib/portfolio-home-source";
 import type { PortfolioLocale } from "@/lib/portfolio-profile";
+import type { ProjectOverview } from "@/lib/github-projects";
+import type { ActivitySnapshotResult } from "@/lib/github-activity";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Portfolio",
+  description:
+    "A recruiter-first profile with selected engineering projects, verified GitHub activity, and technical writing.",
+};
 
 type HomePageProps = {
   searchParams: Promise<{ lang?: string | string[] }>;
@@ -8,6 +20,7 @@ type HomePageProps = {
 
 const labels = {
   zh: {
+    profile: "个人作品集",
     skills: "核心技能",
     experience: "职业经历",
     education: "教育背景",
@@ -16,8 +29,32 @@ const labels = {
     github: "查看 GitHub",
     journal: "阅读技术文章",
     credential: "查看凭证",
+    featured: "精选项目",
+    featuredIntroduction: "具有代表性的工程实践与可核验成果。",
+    allProjects: "浏览全部公开项目",
+    projectsUnavailable: "GitHub 项目信息暂时无法刷新，请稍后重试。",
+    noSummary: "此仓库暂未提供项目简介。",
+    attribution: "项目归属说明",
+    upstream: "上游项目",
+    activity: "GitHub 活动",
+    activityIntroduction: "只统计由 joneswxg 创作并可归属的公开提交。",
+    eligibleProjects: "符合规则的项目",
+    activeProjects: "30 天内活跃项目",
+    latestCommit: "最近本人提交",
+    noCommit: "暂无记录",
+    activityUnavailable: "尚无可用的活动快照。",
+    retainedSnapshot: "GitHub 刷新失败，展示最近一次成功保存的活动快照。",
+    source: "数据源",
+    window: "统计窗口",
+    collected: "采集时间",
+    journalPreview: "技术日志",
+    journalIntroduction: "关于工程决策、实现细节与持续学习的深入记录。",
+    allArticles: "查看全部技术文章",
+    noArticles: "暂无可见的技术文章。",
+    updated: "更新于",
   },
   en: {
+    profile: "Personal Portfolio",
     skills: "Core skills",
     experience: "Career experience",
     education: "Educational background",
@@ -26,8 +63,42 @@ const labels = {
     github: "View GitHub",
     journal: "Read the Technical Journal",
     credential: "View credential",
+    featured: "Featured Projects",
+    featuredIntroduction: "Selected engineering work with verifiable outcomes.",
+    allProjects: "Browse all public projects",
+    projectsUnavailable: "GitHub project data cannot be refreshed right now.",
+    noSummary: "This repository does not provide a project summary yet.",
+    attribution: "Project attribution",
+    upstream: "Upstream",
+    activity: "GitHub Activity",
+    activityIntroduction: "Counts only attributable public commits authored by joneswxg.",
+    eligibleProjects: "Eligible projects",
+    activeProjects: "Active projects in 30 days",
+    latestCommit: "Most recent owner commit",
+    noCommit: "No record yet",
+    activityUnavailable: "No Activity Snapshot is available yet.",
+    retainedSnapshot: "GitHub refresh failed. Showing the latest successful Activity Snapshot.",
+    source: "Source",
+    window: "Activity Window",
+    collected: "Collected",
+    journalPreview: "Technical Journal",
+    journalIntroduction: "Detailed notes on engineering decisions, implementation, and learning.",
+    allArticles: "View all technical articles",
+    noArticles: "No visible Technical Journal articles yet.",
+    updated: "Updated",
   },
 } as const;
+
+function formatDate(value: string | Date, locale: PortfolioLocale) {
+  return new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en", {
+    dateStyle: "medium",
+    timeZone: "Asia/Shanghai",
+  }).format(new Date(value));
+}
+
+function localizedRoute(path: string, locale: PortfolioLocale) {
+  return locale === "en" ? `${path}?lang=en` : path;
+}
 
 function PortfolioProfileSection({
   title,
@@ -56,15 +127,171 @@ function PortfolioProfileSection({
   );
 }
 
+function FeaturedProjectOverview({
+  project,
+  locale,
+}: {
+  project: ProjectOverview;
+  locale: PortfolioLocale;
+}) {
+  const copy = labels[locale];
+
+  return (
+    <article className="flex h-full flex-col rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
+      <div className="flex items-start justify-between gap-4">
+        <h3 className="text-xl font-semibold tracking-tight text-stone-950">
+          {project.name}
+        </h3>
+        <a
+          href={project.githubUrl}
+          aria-label={`${copy.github}: ${project.name}`}
+          className="rounded-full border border-stone-200 p-2 text-stone-500 transition hover:border-stone-400 hover:text-stone-950"
+        >
+          <ExternalLink className="size-4" aria-hidden="true" />
+        </a>
+      </div>
+      <p className="mt-4 flex-1 text-sm leading-7 text-stone-600">
+        {project.summary ?? copy.noSummary}
+      </p>
+      {project.technologies.length > 0 && (
+        <div className="mt-5 flex flex-wrap gap-2">
+          {project.technologies.slice(0, 3).map((technology) => (
+            <span
+              key={technology}
+              className="rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-700"
+            >
+              {technology}
+            </span>
+          ))}
+        </div>
+      )}
+      {project.attribution && (
+        <aside className="mt-5 rounded-2xl bg-amber-50 p-4 text-sm leading-6 text-stone-700">
+          <p className="font-semibold text-stone-900">{copy.attribution}</p>
+          <p className="mt-1">
+            {copy.upstream}: {project.attribution.upstream}
+          </p>
+          <p className="mt-1">{project.attribution.summary}</p>
+        </aside>
+      )}
+      <div className="mt-5 flex items-center gap-4 border-t border-stone-100 pt-4 text-xs text-stone-500">
+        {project.stars !== undefined && (
+          <span className="inline-flex items-center gap-1">
+            <Star className="size-3.5" aria-hidden="true" /> {project.stars}
+          </span>
+        )}
+        {project.forks !== undefined && (
+          <span className="inline-flex items-center gap-1">
+            <GitFork className="size-3.5" aria-hidden="true" /> {project.forks}
+          </span>
+        )}
+        <a
+          href={project.githubUrl}
+          className="ml-auto font-medium text-stone-800 underline decoration-stone-300 underline-offset-4"
+        >
+          {copy.github}
+        </a>
+      </div>
+    </article>
+  );
+}
+
+function ActivitySummary({
+  result,
+  locale,
+}: {
+  result: ActivitySnapshotResult;
+  locale: PortfolioLocale;
+}) {
+  const copy = labels[locale];
+  if (!result.snapshot) {
+    return (
+      <section className="rounded-3xl bg-stone-950 p-7 text-white sm:p-10">
+        <p className="text-sm font-semibold tracking-[0.18em] text-amber-300 uppercase">
+          {copy.activity}
+        </p>
+        <p className="mt-5 text-stone-300">{copy.activityUnavailable}</p>
+      </section>
+    );
+  }
+
+  const { snapshot } = result;
+  const metrics = snapshot.metrics;
+
+  return (
+    <section className="rounded-3xl bg-stone-950 p-7 text-white sm:p-10">
+      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-start">
+        <div>
+          <p className="text-sm font-semibold tracking-[0.18em] text-amber-300 uppercase">
+            {copy.activity}
+          </p>
+          <h2 className="mt-4 max-w-xl text-2xl font-semibold tracking-tight sm:text-3xl">
+            {copy.activityIntroduction}
+          </h2>
+        </div>
+        <Link
+          href={localizedRoute("/projects", locale)}
+          className="inline-flex items-center gap-2 text-sm font-medium text-amber-200"
+        >
+          {copy.allProjects} <ArrowRight className="size-4" aria-hidden="true" />
+        </Link>
+      </div>
+
+      {result.status === "retained-snapshot" && (
+        <p className="mt-6 rounded-2xl bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
+          {copy.retainedSnapshot}
+        </p>
+      )}
+
+      <dl className="mt-8 grid gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-3">
+        <div className="bg-stone-900 p-5">
+          <dt className="text-sm text-stone-400">{copy.eligibleProjects}</dt>
+          <dd className="mt-2 text-3xl font-semibold">{metrics.eligibleProjectCount}</dd>
+        </div>
+        <div className="bg-stone-900 p-5">
+          <dt className="text-sm text-stone-400">{copy.activeProjects}</dt>
+          <dd className="mt-2 text-3xl font-semibold">{metrics.activeProjectCount}</dd>
+        </div>
+        <div className="bg-stone-900 p-5">
+          <dt className="text-sm text-stone-400">{copy.latestCommit}</dt>
+          <dd className="mt-2 text-base font-semibold">
+            {metrics.mostRecentOwnerCommitAt
+              ? formatDate(metrics.mostRecentOwnerCommitAt, locale)
+              : copy.noCommit}
+          </dd>
+        </div>
+      </dl>
+
+      <dl className="mt-5 grid gap-2 text-xs leading-5 text-stone-400 md:grid-cols-3">
+        <div>
+          <dt className="inline font-semibold text-stone-200">{copy.source}: </dt>
+          <dd className="inline">{snapshot.source} · @{snapshot.githubIdentity}</dd>
+        </div>
+        <div>
+          <dt className="inline font-semibold text-stone-200">{copy.window}: </dt>
+          <dd className="inline">
+            {formatDate(snapshot.window.startsAt, locale)} — {formatDate(snapshot.window.endsAt, locale)} ({snapshot.window.timeZone})
+          </dd>
+        </div>
+        <div>
+          <dt className="inline font-semibold text-stone-200">{copy.collected}: </dt>
+          <dd className="inline">{formatDate(snapshot.collectedAt, locale)}</dd>
+        </div>
+      </dl>
+    </section>
+  );
+}
+
 export default async function HomePage({ searchParams }: HomePageProps) {
   const parameters = await searchParams;
   const locale: PortfolioLocale = parameters.lang === "en" ? "en" : "zh";
-  const portfolio = await loadPortfolioProfilePresentation(locale);
+  const home = await loadPortfolioHome(locale);
+  const { portfolio } = home;
   const copy = labels[locale];
 
   return (
     <div lang={locale === "zh" ? "zh-CN" : "en"} className="bg-stone-50">
-      <div className="mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-12">
+      <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
         <div className="mb-10 flex justify-end text-sm" aria-label="Language">
           <Link
             href="/"
@@ -86,7 +313,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         <header className="grid items-center gap-10 pb-14 md:grid-cols-[1fr_16rem] md:gap-16 md:pb-20">
           <div>
             <p className="mb-4 text-sm font-medium tracking-[0.2em] text-amber-700 uppercase">
-              Portfolio Profile
+              {copy.profile}
             </p>
             <h1 className="text-4xl font-semibold tracking-tight text-stone-950 sm:text-6xl">
               {portfolio.profile.name}
@@ -105,7 +332,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 {copy.github}
               </a>
               <Link
-                href="/journal"
+                href={localizedRoute("/journal", locale)}
                 className="rounded-full border border-stone-300 bg-white px-5 py-2.5 text-sm font-medium text-stone-800 transition hover:border-stone-500"
               >
                 {copy.journal}
@@ -123,11 +350,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           />
         </header>
 
-        <PortfolioProfileSection
-          title={copy.skills}
-          emptyLabel={copy.empty}
-          isEmpty={portfolio.skills.length === 0}
-        >
+        <PortfolioProfileSection title={copy.skills} emptyLabel={copy.empty} isEmpty={portfolio.skills.length === 0}>
           <div className="grid gap-7 sm:grid-cols-2">
             {portfolio.skills.map((group) => (
               <div key={group.category}>
@@ -138,11 +361,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </div>
         </PortfolioProfileSection>
 
-        <PortfolioProfileSection
-          title={copy.experience}
-          emptyLabel={copy.empty}
-          isEmpty={portfolio.experience.length === 0}
-        >
+        <PortfolioProfileSection title={copy.experience} emptyLabel={copy.empty} isEmpty={portfolio.experience.length === 0}>
           <div className="space-y-10">
             {portfolio.experience.map((item) => (
               <article key={`${item.organization}-${item.role}-${item.start}`}>
@@ -164,11 +383,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </div>
         </PortfolioProfileSection>
 
-        <PortfolioProfileSection
-          title={copy.education}
-          emptyLabel={copy.empty}
-          isEmpty={portfolio.education.length === 0}
-        >
+        <PortfolioProfileSection title={copy.education} emptyLabel={copy.empty} isEmpty={portfolio.education.length === 0}>
           <div className="space-y-8">
             {portfolio.education.map((item) => (
               <article key={`${item.institution}-${item.qualification}-${item.start}`}>
@@ -181,11 +396,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </div>
         </PortfolioProfileSection>
 
-        <PortfolioProfileSection
-          title={copy.certifications}
-          emptyLabel={copy.empty}
-          isEmpty={portfolio.certifications.length === 0}
-        >
+        <PortfolioProfileSection title={copy.certifications} emptyLabel={copy.empty} isEmpty={portfolio.certifications.length === 0}>
           <div className="space-y-6">
             {portfolio.certifications.map((item) => (
               <article key={`${item.name}-${item.issuer}-${item.date}`}>
@@ -200,6 +411,55 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             ))}
           </div>
         </PortfolioProfileSection>
+
+        <section className="border-t border-stone-200 py-14 sm:py-20">
+          <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-sm font-semibold tracking-[0.18em] text-amber-700 uppercase">{copy.featured}</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-950">{copy.featuredIntroduction}</h2>
+            </div>
+            <Link href={localizedRoute("/projects", locale)} className="inline-flex items-center gap-2 text-sm font-medium text-stone-800">
+              {copy.allProjects} <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+          </div>
+          {home.projectDirectoryStatus === "unavailable" && (
+            <p className="mt-8 rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-12 text-center text-stone-500">{copy.projectsUnavailable}</p>
+          )}
+          <div className="mt-8 grid gap-5 lg:grid-cols-3">
+            {home.featuredProjects.map((project) => (
+              <FeaturedProjectOverview key={project.fullName} project={project} locale={locale} />
+            ))}
+          </div>
+        </section>
+
+        <ActivitySummary result={home.activity} locale={locale} />
+
+        <section className="py-14 sm:py-20">
+          <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-sm font-semibold tracking-[0.18em] text-amber-700 uppercase">{copy.journalPreview}</p>
+              <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-stone-950">{copy.journalIntroduction}</h2>
+            </div>
+            <Link href={localizedRoute("/journal", locale)} className="inline-flex items-center gap-2 text-sm font-medium text-stone-800">
+              {copy.allArticles} <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+          </div>
+          {home.journalPreview.length === 0 ? (
+            <p className="mt-8 rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-12 text-center text-stone-500">{copy.noArticles}</p>
+          ) : (
+            <div className="mt-8 grid gap-5 md:grid-cols-3">
+              {home.journalPreview.map((article) => (
+                <article key={article.id} className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
+                  <p className="text-xs text-stone-500">{copy.updated} {formatDate(article.updatedAt, locale)}</p>
+                  <h3 className="mt-3 text-xl font-semibold tracking-tight text-stone-950">
+                    <Link href={`/articles/${article.slug}`} className="hover:underline">{article.title}</Link>
+                  </h3>
+                  <p className="mt-4 text-sm leading-7 text-stone-600">{article.excerpt}</p>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

@@ -59,14 +59,33 @@ editing rules.
   "education": [],
   "certifications": [],
   "featuredProjects": [
-    "GIF-Download-Tool"
+    "GIF-Download-Tool",
+    "sub2api-ha",
+    "todo-list-app"
   ],
   "projectRules": {
     "excludedRepositories": [
       "devops-training",
       "test-jones"
     ],
-    "admittedForks": []
+    "admittedForks": [
+      {
+        "repository": "sub2api-ha",
+        "upstream": "Wei-Shaw/sub2api",
+        "attribution": {
+          "zh": "在上游项目基础上设计并实现多角色运行时、高可用启动门控、就绪探针与工作负载隔离。",
+          "en": "Designed and implemented role-based runtimes, high-availability startup gates, readiness handling, and workload isolation on top of the upstream project."
+        }
+      },
+      {
+        "repository": "todo-list-app",
+        "upstream": "zjx-immersion/todo-list-app",
+        "attribution": {
+          "zh": "新增按编号查询任务与查询未完成分配任务的接口，并补充区域 Maven 镜像配置。",
+          "en": "Added task lookup and pending assigned-task endpoints, plus regional Maven repository configuration."
+        }
+      }
+    ]
   }
 }
 ```
