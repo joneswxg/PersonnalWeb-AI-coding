@@ -33,8 +33,8 @@ its `zh` value; content is never translated automatically.
 
 ## Schema
 
-- `profile` defines the public name, professional title, summary, avatar, and
-  GitHub Identity URL.
+- `profile` defines the public name, professional title, summary, optional
+  gender and location, avatar, and GitHub Identity URL.
 - `skills` groups localized skill names under localized category names.
 - `experience` defines Career Experience entries with organization, role,
   dates, summary, and outcome highlights.

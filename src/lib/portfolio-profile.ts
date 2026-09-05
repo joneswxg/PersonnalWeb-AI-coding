@@ -11,6 +11,8 @@ export type PortfolioProfileData = {
     name: LocalizedText;
     title: LocalizedText;
     summary: LocalizedText;
+    gender?: LocalizedText;
+    location?: LocalizedText;
     avatar: {
       src: string;
       alt: LocalizedText;
@@ -59,6 +61,8 @@ export type PortfolioProfilePresentation = {
     name: string;
     title: string;
     summary: string;
+    gender?: string;
+    location?: string;
     avatarSrc: string;
     avatarAlt: string;
     githubUrl: string;
@@ -154,6 +158,13 @@ function localizedTextAt(value: unknown, path: string): LocalizedText {
   };
 }
 
+function optionalLocalizedTextAt(
+  value: unknown,
+  path: string,
+): LocalizedText | undefined {
+  return value === undefined ? undefined : localizedTextAt(value, path);
+}
+
 function profileDataAt(value: unknown): PortfolioProfileData {
   const root = objectAt(value, "root");
   if (root.version !== 1) {
@@ -169,6 +180,8 @@ function profileDataAt(value: unknown): PortfolioProfileData {
       name: localizedTextAt(profile.name, "profile.name"),
       title: localizedTextAt(profile.title, "profile.title"),
       summary: localizedTextAt(profile.summary, "profile.summary"),
+      gender: optionalLocalizedTextAt(profile.gender, "profile.gender"),
+      location: optionalLocalizedTextAt(profile.location, "profile.location"),
       avatar: {
         src: httpsUrlAt(avatar.src, "profile.avatar.src"),
         alt: localizedTextAt(avatar.alt, "profile.avatar.alt"),
@@ -309,6 +322,12 @@ export function buildPortfolioProfilePresentation(
       name: localize(data.profile.name, locale),
       title: localize(data.profile.title, locale),
       summary: localize(data.profile.summary, locale),
+      gender: data.profile.gender
+        ? localize(data.profile.gender, locale)
+        : undefined,
+      location: data.profile.location
+        ? localize(data.profile.location, locale)
+        : undefined,
       avatarSrc: data.profile.avatar.src,
       avatarAlt: localize(data.profile.avatar.alt, locale),
       githubUrl: data.profile.githubUrl,

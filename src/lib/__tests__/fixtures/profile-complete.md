@@ -8,6 +8,8 @@
     "name": { "zh": "王小明", "en": "Xiaoming Wang" },
     "title": { "zh": "软件工程师", "en": "Software Engineer" },
     "summary": { "zh": "专注于可靠的 Web 产品。" },
+    "gender": { "zh": "男", "en": "Male" },
+    "location": { "zh": "深圳", "en": "Shenzhen" },
     "avatar": {
       "src": "https://assets.example.com/avatar-v1.webp",
       "alt": { "zh": "王小明的头像", "en": "Portrait of Xiaoming Wang" }

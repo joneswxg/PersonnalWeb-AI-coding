@@ -321,6 +321,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             <p className="mt-4 text-xl text-stone-700 sm:text-2xl">
               {portfolio.profile.title}
             </p>
+            {(portfolio.profile.location || portfolio.profile.gender) && (
+              <p className="mt-3 text-sm text-stone-500">
+                {[portfolio.profile.location, portfolio.profile.gender]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            )}
             <p className="mt-6 max-w-2xl text-base leading-8 text-stone-600 sm:text-lg">
               {portfolio.profile.summary}
             </p>

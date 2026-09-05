@@ -23,6 +23,8 @@ describe("parsePortfolioProfileMarkdown", () => {
 
     expect(profile.version).toBe(1);
     expect(profile.profile.name).toEqual({ zh: "王小明", en: "Xiaoming Wang" });
+    expect(profile.profile.gender).toEqual({ zh: "男", en: "Male" });
+    expect(profile.profile.location).toEqual({ zh: "深圳", en: "Shenzhen" });
     expect(profile.featuredProjects).toEqual([
       "project-one",
       "project-two",
@@ -55,6 +57,8 @@ describe("buildPortfolioProfilePresentation", () => {
       name: "王小明",
       title: "软件工程师",
       summary: "专注于可靠的 Web 产品。",
+      gender: "男",
+      location: "深圳",
       avatarAlt: "王小明的头像",
     });
     expect(presentation.skills[0]).toEqual({
@@ -95,6 +99,8 @@ describe("buildPortfolioProfilePresentation", () => {
 
     expect(presentation.profile.name).toBe("Xiaoming Wang");
     expect(presentation.profile.summary).toBe("专注于可靠的 Web 产品。");
+    expect(presentation.profile.gender).toBe("Male");
+    expect(presentation.profile.location).toBe("Shenzhen");
     expect(presentation.skills[0].items).toEqual(["React", "无障碍设计"]);
     expect(presentation.experience[0].highlights).toEqual([
       "Improved release reliability.",
@@ -118,5 +124,7 @@ describe("buildPortfolioProfilePresentation", () => {
     expect(presentation.experience).toEqual([]);
     expect(presentation.education).toEqual([]);
     expect(presentation.certifications).toEqual([]);
+    expect(presentation.profile.gender).toBeUndefined();
+    expect(presentation.profile.location).toBeUndefined();
   });
 });
