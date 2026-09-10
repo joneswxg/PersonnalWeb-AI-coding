@@ -5,7 +5,6 @@ import {
   type GitHubRepository,
 } from "@/lib/github-projects";
 import {
-  resolveActivitySnapshot,
   type GitHubCommit,
 } from "@/lib/github-activity";
 import { databaseActivitySnapshotStore } from "@/lib/activity-snapshot-store";
@@ -53,21 +52,13 @@ function githubUsernameFromProfileUrl(profileUrl: string): string {
   return username;
 }
 
-function githubToken(): string {
-  const token = process.env.GITHUB_TOKEN;
-  if (!token) {
-    throw new Error("GITHUB_TOKEN is not set.");
-  }
-  return token;
-}
-
-async function githubRequest<T>(path: string, token: string): Promise<T> {
+async function githubRequest<T>(path: string, token?: string): Promise<T> {
   const response = await fetch(`${githubApiUrl}${path}`, {
     cache: "no-store",
     headers: {
       Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${token}`,
       "X-GitHub-Api-Version": "2022-11-28",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
 
@@ -104,7 +95,7 @@ function mapRepository(repository: GitHubApiRepository): GitHubRepository {
 
 function createGitHubProjectSource(
   username: string,
-  token: string,
+  token?: string,
 ): GitHubPortfolioSource {
   return {
     async listRepositories() {
@@ -162,7 +153,7 @@ export async function loadPublicProjectDirectory(
   const username = githubUsernameFromProfileUrl(profile.profile.githubUrl);
 
   return buildPublicProjectDirectory({
-    source: createGitHubProjectSource(username, githubToken()),
+    source: createGitHubProjectSource(username, process.env.GITHUB_TOKEN),
     projectRules: profile.projectRules,
   });
 }
@@ -173,18 +164,10 @@ export async function loadPublicProjectDirectoryWithActivity(
 ) {
   const profile = await loadPortfolioProfilePresentation(locale);
   const githubIdentity = githubUsernameFromProfileUrl(profile.profile.githubUrl);
-  const token = process.env.GITHUB_TOKEN;
-  if (!token) {
-    const activity = await resolveActivitySnapshot({
-      githubIdentity,
-      store: databaseActivitySnapshotStore,
-      now,
-      refresh: () => Promise.reject(new Error("GITHUB_TOKEN is not set.")),
-    });
-    return { directoryStatus: "unavailable" as const, projects: [], activity };
-  }
-
-  const source = createGitHubProjectSource(githubIdentity, token);
+  const source = createGitHubProjectSource(
+    githubIdentity,
+    process.env.GITHUB_TOKEN,
+  );
   return resolvePublicProjectDirectory({
     githubIdentity,
     source,
